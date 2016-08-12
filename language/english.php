@@ -4,7 +4,7 @@
 # english.php
 # This is the english language page for the Geeklog Dbman Plug-in!
 #
-# Copyright (C) 2006 mystral_kk - mystral_kk AT ddlinks DOT net
+# Copyright (C) 2006 mystral-kk - geeklog AT mystral-kk DOT net
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -21,7 +21,7 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #
 ###############################################################################
-# $Id$
+# $Id: english.php,v 1.2 2006/07/03 04:43:02 kenji Exp $
 
 /*
  * This is the english language page for the Geeklog Dbman Plug-in! 
@@ -57,8 +57,8 @@ $LANG_DBMAN = array(
 	'couldnt_write_backup' => "Couldn't write data into a backupfile.",
 	'db_explanation_backup' => 'To backup Database, click \'Backup now!\'.',
 	'db_explanation_list' => 'Click \'Backup DB\' or \'Restore DB\'',
-	'db_explanation_restore' => 'To restore Database, check a backup file and then click \'Next &gt;$gt;>\'.',
-	'db_explanation_restore_option' => 'Select options for %s.  If you check <strong>TABLE STRUCTURES</strong>, the checked tables structures will be re-created (existing data will be deleted).  If you check <strong>DATA</strong>, the checked data will be restored without deleting the existing data.  In case there is a duplicate record, the existing record will be overwritten.<br><strong>WARNING: The restoration feature is a simple and crude one under development.  Dbman plugin doesn\'t care which table you will restore or which record will be overwritten.  In case you restore data into tables being used by the Geeeklog system or the size of records to be restored is too big, the restoration process may fail and result in broken tables.</strong>',  /* %s = backup file */
+	'db_explanation_restore' => 'To restore Database, check a backup file and then click \'Next &gt;&gt;>\'.',
+	'db_explanation_restore_option' => 'Select options for %s.  If you check <strong>TABLE STRUCTURES</strong>, the checked tables\' structures will be re-created (the existing data will be deleted).  If you check <strong>DATA</strong>, the checked data will be restored without deleting the existing data.  In case there is a duplicate record, the existing record will be overwritten.<br><strong>WARNING: The restoration feature is a simple and crude one under development.  Dbman plugin doesn\'t care which table you will restore or which record will be overwritten.  In case you restore data into tables being used by the Geeeklog system or the size of records to be restored is too big, the restoration process may fail and result in broken tables.</strong>',  /* %s = backup file */
 	'download_as_file' => 'Download as a file',
 	'enabled' => 'Disable plugin before uninstalling.',
 	'install' => 'Install',
@@ -67,7 +67,7 @@ $LANG_DBMAN = array(
 	'install_header'	=> 'Install/Uninstall Plugin',
   'install_failed'	=> 'Installation Failed -- See your error log to find out why.',
 	'install_success'	=> 'Installation Successful',
-	'last_ten_backups' => 'Last ten backups',
+	'last_ten_backups' => 'Backups stored on the server',
 	'menu_backup' => 'Backup Database',
 	'menu_list' => 'List backuped files',
 	'menu_restore' => 'Restore selected DB',
@@ -93,7 +93,18 @@ $LANG_DBMAN = array(
 	'uninstall_msg'	=> 'Plugin Successfully Uninstalled',
 	'uninstalled' => 'The Plugin is Not Installed',
 	'warning' => 'Warning!  Plugin is still Enabled',
-	'dbman' => 'Dbman'
+	'dbman' => 'Dbman',
+// ver 0.4.3 -->
+	'invalid_filename' => 'Invalid file name.',
+	'file_not_exist' => 'File not found.',
+	'lbl_delete_file' => 'Delete the checked files',
+	'ttl_delete_file' => 'Delete backup files',
+	'menu_console' => 'SQL Console',
+	'lbl_exec_sql' => 'Execute SQL',
+	'desc_exec_sql' => 'Execute SQL you enter in the text box bellow.  You can use only SELECT, INSERT, UPDATE, and DELETE statements.',
+	'sql_executed' => 'SQL you executed: ',
+	'sql_result' => 'Results: ',
+	'sql_error_siud' => 'Error!  You can either SELECT or INSERT or DELETE or UPDATE with this SQL console.'
 );
 
 ?>

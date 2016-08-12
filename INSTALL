@@ -1,53 +1,95 @@
-Install/Uninstall instruction for the Geeklog DBMan (Database Manager) plugin.
+======================================================================
+Install/Uninstall instruction
+  for the Geeklog Dbman (Database Manager) plugin
+
+Copyright (C) 2006 mystral-kk - geeklog AT mystral-kk DOT net
+                                http://mystral-kk.net/
+======================================================================
+
+#####  Features of Dbman plugin #####
+
+The Dbman plugin backups/restores database WITHOUT using mysqldump(.exe).  The
+Dbman plugin is published under GPL license.
+
+##### /Features of Dbman plugin #####
 
 BEFORE INSTALL:
 
 #####  WARNING #####
 
-This plugin is still at its alpha release stage, so I'm afraid it might have some
-bugs.  Make a backup of your current geeklog database using the built-in admin
-feature in advance.  Verify your backup feature is configured correctly and backup
-file is not 0 byte (This is worth a check).  YOU HAVE BEEN WARNED!
+This plugin is still at its BETA release stage, so I'm afraid it might have some
+bugs.  Make a backup of your current geeklog database in advance using the
+built-in admin feature or phpMyAdmin.  Verify your backup feature is configured
+correctly and backup file is not 0 byte (This is worth a check).
+YOU HAVE BEEN WARNED!
 
 ##### /WARNING #####
 
 INSTALL:
 
-Step 1:  Uncompress the DBMan plugin archive (dbman-x.y.tar.gz) while in the
+In the following steps,
+<geeklog_dir> is a directory where your system's config.php files resides,
+<public_html> is a directory where your lib-common.php file resides.
+
+Step 1:  Uncompress the Dbman plugin archive (dbman-x.y.z.tar.gz) while in the
 <geeklog_dir>/plugins directory.  The archive will create a directory named
- dbman in the plugins directory.
+dbman in the plugins directory.
 
-Step 2:  Create the admin directory.  Under your admin/plugins/ directory create
-a directory named dbman.  DBMan doesn't need a 'public_html/dbman' directory.
+Step 2:  Create the admin directory.  Under your <public_html>/admin/plugins/
+directory create a directory named 'dbman'.  Dbman doesn't need a
+'<public_html>/dbman' directory.
 
-Step 3:  Change to your <geeklog_dir>/plugins/dbman/admin directory.  Copy the files
-in the directory to the admin/plugins/dbman/ directory your created in step 2.
+Step 3:  Change to your <geeklog_dir>/plugins/dbman/admin directory.  Copy the
+files in the directory to the <public_html>/admin/plugins/dbman/ directory your
+created in step 2.
 
-Step 4:  Log in to your Geeklog as a root user (admin) and install dbman plugin
+Step 4:  Log in to your Geeklog as a root user (admin) and install Dbman plugin
 in the plugin editor.  The install page will tell you if the install was successful
 or not.  If not, examine Geeklog system errorlog for possible problems.
 
-The DBMan plugin should now be installed and functioning.  Clicking on the DBMan
+The Dbman plugin should now be installed and functioning.  Clicking on the Dbman
 Icon will take you to the admin page.
 
-Step 5: Set up security.  On install only the root users have access to DBMan
-administration and Viewing.  You can delegate control for either of these functions
-through the user and group editors.
+Step 5: Set up security.  On install only the root users have access to Dbman
+administration and Viewing.  You can delegate control for either of these
+functions through the user and group editors.
+
+Step 6: (Optional)  Configure Dbman.  You can modify
+<geeklog-dir>/plugins/dbman/config.php.  By default, Dbman *** doesn't ***
+backup tables created by GUS (Geeklog Usage Stats) plugin, becuase they could
+be too large to backup even when you use phpMyAdmin.
 
 UNINSTALL:
 
-Step 1:  Log in to your Geeklog as a root user (admin).  Uninstall dbman plugin
+Step 1:  Log in to your Geeklog as a root user (admin).  Uninstall Dbman plugin
 in the plugin editor.
 
 Step 2:  Delete the two plugin directories created in the install process:
-<geeklog-dir>plugins/dbman/ and <admin>/plugins/dbman/
+<geeklog-dir>/plugins/dbman/ and <public_html>/admin/plugins/dbman/
 
 That's it.
 
 #####  REVISION HISTORY #####
 
-ver 0.4   2006/05/04 Implemented a feature of restoring data from backup file.
-ver 0.3.1 2006/04/28 Modified to save NULL values correctly.
-ver 0.3              Initial version.
+ver 0.4.3 2006/08/06  Now you can download backupped files simply by clicking
+                      their respectives URL links.
+		      Added SQL console to input and execute SQL.
+
+ver 0.4.2 2006/07/03  Modified to use $_Dbman_CONF['backup_except'] in deciding
+                      whether a table's contents should not be backupped.  By
+		      default, Dbman *** doesn't *** backup tables created by
+		      GUS (Geeklog Usage Stats) plugin.  If you'd like to change
+		      this, edit $_DBMAN_CONF['backup_except'] in
+		      <geeklog_dir>/plugins/dbman/config.php.
+
+ver 0.4.1 2006/07/03  Modified to backup records in small chunks (default 100)
+                      to avoid "MySQL Client Out of Memory" error.  Modfied
+		      to enabled plugin_upgrade_Dbman() to work properly.
+
+ver 0.4   2006/05/04  Implemented a feature of restoring data from backup file.
+
+ver 0.3.1 2006/04/28  Modified to save NULL values correctly.
+
+ver 0.3               Initial version.
 
 ##### /REVISION HISTORY #####

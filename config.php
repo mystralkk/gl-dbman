@@ -6,7 +6,8 @@
 // +---------------------------------------------------------------------------+
 // | config.php   Dbman plugin configuration file                              |
 // +---------------------------------------------------------------------------+
-// | Copyright (C) 2006  mystral_kk - mystral_kk AT ddlinks DOT net            |
+// | Constructed with the Universal Plugin                                     |
+// | Copyright (C) 2006  mystral-kk - geeklog AT mystral-kk DOT net            |
 // +---------------------------------------------------------------------------+
 // |                                                                           |
 // | This program is licensed under the terms of the GNU General Public License|
@@ -24,10 +25,12 @@
 // | Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.           |
 // +---------------------------------------------------------------------------+
 //
-// $Id$
+// $Id: config.php,v 1.2 2006/07/03 04:43:07 kenji Exp $
 /* 
  * Dbman plugin configuration file
  */
+
+global $_DB_table_prefix;
 
 /*
  * the Dbman plugin's config array
@@ -39,11 +42,9 @@ $_DBMAN_CONF = array();
 
 /*
  * the dbman plugin's version setting
- * 
- * @global array $_DBMAN_CONF['version']
  */
 
-$_DBMAN_CONF['version'] = '0.4';					// Plugin Version
+$_DBMAN_CONF['version'] = '0.4.3';					// Plugin Version
 
 /*
  * the flag to decide whether to add "DROP TABLE IF EXISTS ...".
@@ -51,6 +52,14 @@ $_DBMAN_CONF['version'] = '0.4';					// Plugin Version
  */
  
 $_DBMAN_CONF['add_drop_table'] = false;
+
+/*
+ * the number of records to select data from database when the dbman plugin
+ * backups a table.  If "MySQL client run out of memory." error occurs,
+ * decrease this value
+ */
+
+$_DBMAN_CONF['chunk_size'] = 100;
 
 /*
  * the dbman Plugin doen't backup BLOB data for the compatibility with
@@ -69,6 +78,17 @@ $_DBMAN_CONF['backup_blob'] = false;
  */
 
 $_DBMAN_CONF['compress_data'] = false;
+
+/*
+ * table names which the Dbman plugin shouldn't backup the data of (table
+ * structures will always be backupped).  You can use regular expressions
+ * (preg_match() style) to designate table name(s).
+ * e.g. "/^{$_DB_table_prefix}sessions_/"
+ */
+
+$_DBMAN_CONF['backup_except'] = array();
+$_DBMAN_CONF['backup_except'][] = "/^{$_DB_table_prefix}gus_/";
+//$_DBMAN_CONF['backup_except'][] = "/^{$_DB_table_prefix}sessions/";
 
 /*
  * the flag to indicate compression level:

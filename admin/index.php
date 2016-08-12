@@ -6,13 +6,14 @@
 // +---------------------------------------------------------------------------+
 // | index.php   Dbman plugin admin index file                                 |
 // +---------------------------------------------------------------------------+
+// | Constructed with the Universal Plugin                                     |
 // | Copyright (C) 2000-2006 by the following authors:                         |
 // |                                                                           |
 // | Authors: Tony Bibbs         - tony AT tonybibbs DOT com                   |
 // |          Blaine Lang        - langmail AT sympatico DOT ca                |
 // |          Dirk Haun          - dirk AT haun-online DOT de                  |
 // |          Alexander Schmacks - Alexander.Schmacks AT gmx DOT de            |
-// |          mystral_kk         - info AT ddlinks DOT net                     |
+// |          mystral-kk         - geeklog AT mystral-kk DOT net               |
 // +---------------------------------------------------------------------------+
 // | This program is licensed under the terms of the GNU General Public License|
 // | as published by the Free Software Foundation; either version 2            |
@@ -29,20 +30,21 @@
 // | Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.           |
 // +---------------------------------------------------------------------------+
 //
-// $Id$
+// $Id: index.php,v 1.1 2006/07/03 04:43:27 kenji Exp $
 /* 
  * Dbman plugin admin index file based on Geeklog 'databse.php' file
  */
 
+global $_CONF, $_USER;
 require_once('../../../lib-common.php');
 require_once($_CONF['path'] . '/plugins/dbman/config.php');
 
 $display = '';
 
-// Check user has rights to access this page
+// Check if user has rights to access this page
 if (!SEC_hasRights('dbman.edit')) {
     // Someone is trying to illegally access this page
-    COM_errorLog("Someone has tried to illegally access the Dbman page.  User id: {$_USER['uid']}, Username: {$_USER['username']}, IP: $REMOTE_ADDR",1);
+    COM_errorLog("Someone has tried to illegally access the Dbman page.  User id: {$_USER['uid']}, Username: {$_USER['username']}, IP: {$_SERVER['REMOTE_ADDR']}", 1);
     $display  = COM_siteHeader();
     $display .= COM_startBlock($LANG_DBMAN['access_denied']);
     $display .= $LANG_DBMAN['access_denied_msg'];
@@ -57,17 +59,15 @@ if (!SEC_hasRights('dbman.edit')) {
 $js = <<< EOD
 <script type="text/javascript">
 <!--
-// Check all
-function chTableOn(){
-  for(i=0; i<chn.length; i++) {
-    document.nForm.elements[chn[i]].checked = true;
-  }
+function checkTable(num_table, v){
+	for (i = 0; i < num_table; i ++) {
+		document.getElementById("restore_structure" + String(i)).checked = v;
+    }
 }
-// UnCheck all
-function chTableOff(){
-  for(i=0; i<chn.length; i++) {
-    document.nForm.elements[chn[i]].checked = false;
-  }
+function checkData(num_table, v){
+	for (i = 0; i < num_table; i ++) {
+		document.getElementById("restore_data" + String(i)).checked = v;
+    }
 }
 //-->
 </script>
@@ -174,13 +174,42 @@ case 'restore':
 	}
 	break;
 	
+case 'delete':
+	if (isset($_POST['deletefiles'])) {
+		$display .= COM_startBlock($LANG_DBMAN['ttl_delete_file']);
+		$deletefiles = $_POST['deletefiles'];
+		
+		foreach ($deletefiles as $deletefile) {
+			$result = DBMAN_delete(COM_applyFilter($deletefile));
+			if ($result) {
+				COM_errorLog("Dbman: successfully deleted {$deletefile}.");
+				$display .= "<span style='color: green;'>[success]</span> <strong>{$deletefile}</strong><br>";
+			} else {
+				COM_errorLog("Dbman: failed in deleting {$deletefile}.");
+				$display .= "<span style='color: red;'>[failure]</span> <strong>{$deletefile}</strong><br>";
+			}
+		}
+		
+		$display .= "<p><a href='" . $_CONF['site_admin_url'] . '/plugins/dbman/index.php' . "'>Dbman HOME</a></p>";
+		$display .= COM_endBlock();
+	}
+	break;
+	
+case 'console':
+	$display .= DBMAN_showSQLConsole();
+	break;
+	
+case 'console_exec':
+	$display .= DBMAN_execSQL();
+	break;
+	
 case 'list':
 	$display .= DBMAN_listBackups();
 	break;
 }
 
 // to hide right blocks, use COM_siteFooter() instead
-$display .= COM_siteFooter(1);	
+$display .= COM_siteFooter();	
 echo $display;
 
 ?>

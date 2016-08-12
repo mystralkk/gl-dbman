@@ -6,7 +6,8 @@
 // +---------------------------------------------------------------------------+
 // | install.php   Dbman plugin installation file                              |
 // +---------------------------------------------------------------------------+
-// | Copyright (C) 2006  mystral_kk - mystral_kk AT ddlinks DOT net            |
+// | Constructed with the Universal Plugin                                     |
+// | Copyright (C) 2006  mystral-kk - geeklog AT mystral-kk DOT net            |
 // +---------------------------------------------------------------------------+
 // | This program is licensed under the terms of the GNU General Public License|
 // | as published by the Free Software Foundation; either version 2            |
@@ -23,7 +24,7 @@
 // | Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.           |
 // +---------------------------------------------------------------------------+
 //
-// $Id$
+// $Id: install.php,v 1.1 2006/07/03 04:43:27 kenji Exp $
 /* 
  * Dbman plugin installation file
  */
