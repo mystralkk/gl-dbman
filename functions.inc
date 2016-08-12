@@ -31,7 +31,7 @@
 
 global $_DB_dbms;				// needs to be declared while UnInstallation
 
-if (strpos($_SERVER['PHP_SELF'], 'functions.inc') !== false) {
+if (strpos(strtolower($_SERVER['PHP_SELF']), 'functions.inc') !== false) {
     die('This file can not be used on its own.');
 }
 

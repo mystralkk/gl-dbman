@@ -31,6 +31,10 @@
 // | Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.           |
 // +---------------------------------------------------------------------------+
 
+if (strpos(strtolower($_SERVER['PHP_SELF']), 'config.php') !== false) {
+    die('This file can not be used on its own.');
+}
+
 /**
 * Dbman plugin configuration file
 */
@@ -47,7 +51,7 @@ $_DBMAN_CONF = array();
 /**
 * the dbman plugin's version setting
 */
-$_DBMAN_CONF['version'] = '0.5.1';					// Plugin Version
+$_DBMAN_CONF['version'] = '0.5.2';					// Plugin Version
 
 //===============================================
 // Global settings

@@ -73,6 +73,9 @@ That's it.
 REVISION HISTORY
 ----------------
 
+ver 0.5.2 2008-09-26  Upgraded to prevent include-files to be directly accessed
+                      in some case-insensitive file systems (e.g. MS Windows).
+
 ver 0.5.1 2008-09-14  Modified to work properly with PHP-4.x by not using
                       htmlentities() and html_entity_decode() functions.
 
