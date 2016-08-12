@@ -6,7 +6,7 @@
 // +---------------------------------------------------------------------------+
 // | geeklog/plugins/dbman/language/english.php                                |
 // +---------------------------------------------------------------------------+
-// | Copyright (C) 2008-2010 mystral-kk - geeklog AT mystral-kk DOT net        |
+// | Copyright (C) 2008-2011 mystral-kk - geeklog AT mystral-kk DOT net        |
 // |                                                                           |
 // | Constructed with the Universal Plugin                                     |
 // | Copyright (C) 2002 by the following authors:                              |
@@ -107,26 +107,29 @@ $LANG_DBMAN = array(
 /**
 * For Config UI
 */
+$LANG_configsections['dbman'] = array(
+    'label' => 'Dbman',
+    'title' => 'Dbman settings',
+);
+
 $LANG_confignames['dbman'] = array(
     'allow_restore'     => 'Allow restoration',
     'add_drop_table'    => 'Add "DROP TABLE IF EXISTS"',
     'chunk_size'        => 'Buffer Size(Default:100)',
-//	'backup_blob'       => 'Backup BLOB as well',
     'compress_data'     => 'Compress data',
     'compression_level' => 'Compression Level',
     'download_as_file'  => 'Download as a file',
     'backup_except'     => 'Ignored tables',
-//	'restore_blob'      => 'Restore BLOB as well',
 	'cron_backup'       => 'Schedule a regular backup',
 	'max_backup'        => 'Max number of backup files (0=No limit)',
 );
 
 $LANG_configsubgroups['dbman'] = array(
-    'sg_main' => 'Main'
+    'sg_main' => 'Dbman Settings'
 );
 
 $LANG_fs['dbman'] = array(
-    'fs_main'   => 'Main Config for Dbman',
+    'fs_main'   => 'Main Settings',
     'fs_backup' => 'Default Settings for backup',
 );
 

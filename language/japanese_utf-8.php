@@ -6,7 +6,7 @@
 // +---------------------------------------------------------------------------+
 // | geeklog/plugins/dbman/language/japanese_utf-8.php                         |
 // +---------------------------------------------------------------------------+
-// | Copyright (C) 2008-2010 mystral-kk - geeklog AT mystral-kk DOT net        |
+// | Copyright (C) 2008-2011 mystral-kk - geeklog AT mystral-kk DOT net        |
 // |                                                                           |
 // | Constructed with the Universal Plugin                                     |
 // | Copyright (C) 2002 by the following authors:                              |
@@ -104,35 +104,32 @@ $LANG_DBMAN = array(
     'errmsg1'     => 'CSRFチェックに引っかかりました。Webブラウザの「戻る」ボタンを使用しないでください。',
 );
 
-// Localization of the Admin Configuration UI
-$LANG_configsections['staticpages'] = array(
-    'label' => '静的ページ',
-    'title' => '静的ページの設定'
-);
-
 /**
 * For Config UI
 */
+$LANG_configsections['dbman'] = array(
+    'label' => 'Dbman',
+    'title' => 'Dbmanの設定'
+);
+
 $LANG_confignames['dbman'] = array(
     'allow_restore'     => 'リストアを許可する',
     'add_drop_table'    => '"DROP TABLE IF EXISTS"を追加する',
     'chunk_size'        => 'バッファのサイズ（デフォルト：100）',
-//	'backup_blob'       => 'BLOBをバックアップする',
     'compress_data'     => 'データを圧縮する',
     'compression_level' => '圧縮レベル',
     'download_as_file'  => 'ファイルとしてダウンロードする',
     'backup_except'     => 'バックアップしないテーブル',
-//	'restore_blob'      => 'BLOBをリストアする',
 	'cron_backup'       => '定期的にバックアップする',
 	'max_backup'        => 'バックアップファイル数の上限（0=上限なし）',
 );
 
 $LANG_configsubgroups['dbman'] = array(
-    'sg_main' => 'メイン'
+    'sg_main' => 'Dbmanの設定'
 );
 
 $LANG_fs['dbman'] = array(
-    'fs_main'   => 'Dbmanのメイン設定',
+    'fs_main'   => '主要設定',
     'fs_backup' => 'バックアップ時の初期値',
 );
 

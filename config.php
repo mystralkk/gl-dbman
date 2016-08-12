@@ -6,7 +6,7 @@
 // +---------------------------------------------------------------------------+
 // | geeklog/plugins/dbman/config.php                                          |
 // +---------------------------------------------------------------------------+
-// | Copyright (C) 2008-2010 mystral-kk - geeklog AT mystral-kk DOT net        |
+// | Copyright (C) 2008-2011 mystral-kk - geeklog AT mystral-kk DOT net        |
 // |                                                                           |
 // | Constructed with the Universal Plugin                                     |
 // | Copyright (C) 2002 by the following authors:                              |
@@ -41,120 +41,18 @@ if (strpos(strtolower($_SERVER['PHP_SELF']), 'config.php') !== false) {
 
 global $_DB_table_prefix, $_CONF;
 
-/**
-* the Dbman plugin's config array
-* 
-* @global array $_DBMAN_CONF
-*/
+// the Dbman plugin's config array
 $_DBMAN_CONF = array();
 
-/**
-* the dbman plugin's version setting
-*/
-$_DBMAN_CONF['version'] = '0.5.4';					// Plugin Version
-
-//===============================================
-// Global settings
-//===============================================
-
-/**
-* the flag to decide whether to allow restoration in Dbman plugin.
-* SHOULD BE FALSE TO PREVENT ACCIDENTAL DAMAGE TO DATABASE.  SET THIS OPTION TO
-* TRUE ONLY IF YOU KNOW WHAT YOU DO.  YOU HAVE BEEN WARNED!
-*/
-$_DBMAN_CONF['allow_restore'] = FALSE;
-
-//===============================================
-// Default settings for backup
-//===============================================
-
-/**
-* the flag to decide whether to add "DROP TABLE IF EXISTS ...".
-* For the compatibility with PhpMyAdminin, this should be set false.
-*/
-$_DBMAN_CONF['add_drop_table'] = FALSE;
-
-/**
-* the number of records to select data from database when the dbman plugin
-* backups a table.  If "MySQL client run out of memory." error occurs,
-* decrease this value
-*/
-$_DBMAN_CONF['chunk_size'] = 100;
-
-/**
-* the dbman Plugin doen't backup BLOB data for the compatibility with
-* PhpMyAdminin but replaces the data with a string '(BLOB)'.  However, if this
-* flag is set true, the plugin will backup BLOB data in the base64 format.
-* Still, "INSERT INTO ..." SQL statements with BLOB are commented out.
-*/
-//$_DBMAN_CONF['backup_blob'] = FALSE;
-
-/**
-* the flag to decide whether to compress backup files.  If set true, the
-* dbman plugin tries to compress the data with Zlib.  In this case,
-* names of backup files are '*.sql.gz'.
-*/
-$_DBMAN_CONF['compress_data'] = FALSE;
-
-/**
-* the flag to indicate compression level:
-* valid values: 1 (largest size) - 9 (smallest size)
-*/
-$_DBMAN_CONF['compression_level'] = 8;
-
-/**
-* the flag to decide whether to download backup files.
-*/
-$_DBMAN_CONF['download_as_file'] = FALSE;
-
-//===============================================
-// Additional settings for backup
-//===============================================
-
-/**
-* table names which the Dbman plugin shouldn't backup the data of (table
-* structures will always be backupped).  You can use regular expressions
-* (preg_match() style) to designate table name(s).
-* e.g. "/^{$_DB_table_prefix}sessions_/"
-*/
-$_DBMAN_CONF['backup_except']   = array();
-$_DBMAN_CONF['backup_except'][] = "/^{$_DB_table_prefix}gus_/";
-
-/**
-* the flag to decide whether to backup with psedo-cron
-*/
-$_DBMAN_CONF['cron_backup'] = FALSE;
-
-/**
-* Maximum number of backup files to be kept.  When set to 0, no backup file
-* will be deleted.
-*/
-$_DBMAN_CONF['max_backup'] = 0;
-
-//===============================================
-// Additional settings for restore
-//===============================================
-
-/**
-* the flag to decide whether to restore BLOB fields.
-*/
-//$_DBMAN_CONF['restore_blob'] = false;
-
-//===============================================
-// For GL-1.5+
-//===============================================
-
-/**
-* Check and see if we need to load the plugin configuration
-*/
-if (version_compare(VERSION, '1.5') >= 0) {
-    require_once $_CONF['path_system'] . 'classes/config.class.php';
-    
-    $dbman_config = config::get_instance();
-    if ($dbman_config->group_exists('dbman')) {
-        $temp = $dbman_config->get_config('dbman');
-        if (is_array($temp) AND (count($temp) >= 1)) {
-            $_DBMAN_CONF = array_merge($_DBMAN_CONF, $temp);
-        }
-    }
-}
+$_DBMAN_CONF['pi_version'] = '0.6.0';					// Plugin Version
+$_DBMAN_CONF['gl_version'] = '1.6.0';					// GL Version plugin for
+$_DBMAN_CONF['pi_url']     = 'http://mystral-kk.net/';	// Plugin Homepage
+$_DBMAN_CONF['GROUPS']     = array(
+		'Dbman Admin' => 'Users in this group can administer the Dbman plugin',
+);
+$_DBMAN_CONF['FEATURES']   = array(
+		'dbman.edit' => 'Access to Dbman editor',
+);
+$_DBMAN_CONF['MAPPINGS']   = array(
+		'dbman.edit' => array('Dbman Admin'),
+);

@@ -6,7 +6,7 @@
 // +---------------------------------------------------------------------------+
 // | public_html/admin/plugins/dbman/download.php                              |
 // +---------------------------------------------------------------------------+
-// | Copyright (C) 2008-2010 mystral-kk - geeklog AT mystral-kk DOT net        |
+// | Copyright (C) 2008-2011 mystral-kk - geeklog AT mystral-kk DOT net        |
 // |                                                                           |
 // | Constructed with the Universal Plugin                                     |
 // | Copyright (C) 2002 by the following authors:                              |
@@ -55,6 +55,7 @@ if (!SEC_hasRights('dbman.edit')) {
 * Check if filename contains directory, or if filename ends with '.sql' or '.sql.gz'
 */
 $filename = COM_applyFilter($_GET['filename']);
+
 if (($filename != basename($filename))
  OR (!preg_match('/\.sql$/i', $filename) AND !preg_match('/\.sql\.gz$/i', $filename))) {
     // Invalid file name was designated.
@@ -73,6 +74,7 @@ if (($filename != basename($filename))
 */
 $filename = $_CONF['backup_path'] . $filename;
 clearstatcache();
+
 if (!file_exists($filename)) {
     // The designated file doesn't exist
     COM_errorLog("Dbman: The file you designated doesn't exist.  User id: {$_USER['uid']}, Username: {$_USER['username']}, IP: {$_SERVER['REMOTE_ADDR']}", 1);
@@ -90,11 +92,13 @@ if (!file_exists($filename)) {
 */
 clearstatcache();
 $info = pathinfo($filename);
-if ($info['extension'] == 'gz') {
+
+if ($info['extension'] === 'gz') {
     header("Content-type: application/x-gzip");
 } else {
     header("Content-type: text/x-sql");
 //	header("Content-type: application/octetstream");
 }
+
 header("Content-Disposition: attachment; filename={$info['basename']}");
 readfile($filename);
