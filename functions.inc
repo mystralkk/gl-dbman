@@ -166,10 +166,10 @@ function plugin_upgrade_dbman() {
 	* update plugin info
 	*/
 	$sql = "UPDATE " . $_TABLES['plugins']
-		 . " SET pi_version = '" . $_DBMAN_CONF['version'] . "'"
-		 . " WHERE (pi_name = 'dbman')";
+		 . "  SET pi_version = '" . addslashes($_DBMAN_CONF['pi_version']) . "'"
+		 . "  WHERE (pi_name = 'dbman')";
 	$result = DB_query($sql);
-	COM_errorLog("Dbman plugin was successfully updated to version {$_DBMAN_CONF['version']}.");
+	COM_errorLog("Dbman plugin was successfully updated to version {$_DBMAN_CONF['pi_version']}.");
 	
 	return TRUE;
 }

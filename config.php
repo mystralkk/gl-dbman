@@ -44,7 +44,7 @@ global $_DB_table_prefix, $_CONF;
 // the Dbman plugin's config array
 $_DBMAN_CONF = array();
 
-$_DBMAN_CONF['pi_version'] = '0.6.0';					// Plugin Version
+$_DBMAN_CONF['pi_version'] = '0.6.1';					// Plugin Version
 $_DBMAN_CONF['gl_version'] = '1.6.0';					// GL Version plugin for
 $_DBMAN_CONF['pi_url']     = 'http://mystral-kk.net/';	// Plugin Homepage
 $_DBMAN_CONF['GROUPS']     = array(
