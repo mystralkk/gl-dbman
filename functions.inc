@@ -23,7 +23,7 @@
 // | Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.           |
 // +---------------------------------------------------------------------------+
 //
-// $Id: functions.inc,v 1.2 2006/07/03 04:43:07 kenji Exp $
+// $Id: functions.inc,v 1.3 2007/04/05 00:00:56 kenji Exp $
 /* 
  * Dbman plugin general functions file
  */
@@ -1016,7 +1016,8 @@ function DBMAN_showSQLConsole() {
             'menufields' => 'menufields.thtml'
 		)
 	);
-    $T->set_var('icon', $baseurl . '/images/dbman.png');
+//    $T->set_var('icon', $baseurl . '/images/dbman.png');
+    $T->set_var('icon', "<img src=\"{$baseurl}/images/dbman.png\" alt=\"\">" );
     $T->set_var('lang_instructions', $LANG_DBMAN['desc_exec_sql']);
 	$menu_items = '';
 	for ($i = 0; $i < count($menu_arr); $i ++) {

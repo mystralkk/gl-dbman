@@ -30,7 +30,7 @@
 // | Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.           |
 // +---------------------------------------------------------------------------+
 //
-// $Id: index.php,v 1.1 2006/07/03 04:43:27 kenji Exp $
+// $Id: index.php,v 1.2 2007/04/05 00:02:12 kenji Exp $
 /* 
  * Dbman plugin admin index file based on Geeklog 'databse.php' file
  */

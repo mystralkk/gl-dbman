@@ -25,7 +25,7 @@
 // | Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.           |
 // +---------------------------------------------------------------------------+
 //
-// $Id: config.php,v 1.2 2006/07/03 04:43:07 kenji Exp $
+// $Id: config.php,v 1.3 2007/04/05 00:00:56 kenji Exp $
 /* 
  * Dbman plugin configuration file
  */
@@ -44,7 +44,7 @@ $_DBMAN_CONF = array();
  * the dbman plugin's version setting
  */
 
-$_DBMAN_CONF['version'] = '0.4.4';					// Plugin Version
+$_DBMAN_CONF['version'] = '0.4.5';					// Plugin Version
 
 /*
  * the flag to decide whether to add "DROP TABLE IF EXISTS ...".

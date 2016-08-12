@@ -71,7 +71,10 @@ That's it.
 
 #####  REVISION HISTORY #####
 
+ver 0.4.5 2007/04/05  Fixed a broken path in SQL console screen.  Thanks Tsuchi!
+
 ver 0.4.4 2007/03/25  Fixed to save CRLF correctly.
+
 ver 0.4.3 2006/08/06  Now you can download backupped files simply by clicking
                       their respectives URL links.
 		      Added SQL console to input and execute SQL.

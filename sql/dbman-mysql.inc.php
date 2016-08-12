@@ -24,7 +24,7 @@
 // | Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.           |
 // +---------------------------------------------------------------------------+
 //
-// $Id: dbman-mysql.inc.php,v 1.2 2006/07/03 04:43:07 kenji Exp $
+// $Id: dbman-mysql.inc.php,v 1.3 2007/04/05 00:00:57 kenji Exp $
 /* 
  * Dbman plugin DB-specific functions file for MySQL
  */

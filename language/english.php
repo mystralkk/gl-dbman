@@ -21,7 +21,7 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #
 ###############################################################################
-# $Id: english.php,v 1.2 2006/07/03 04:43:02 kenji Exp $
+# $Id: english.php,v 1.3 2007/04/05 00:00:57 kenji Exp $
 
 /*
  * This is the english language page for the Geeklog Dbman Plug-in! 
