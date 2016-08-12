@@ -73,6 +73,9 @@ That's it.
 REVISION HISTORY
 ----------------
 
+ver 0.5.1 2008-09-14  Modified to work properly with PHP-4.x by not using
+                      htmlentities() and html_entity_decode() functions.
+
 ver 0.5.0 2008-07-26  Modified to work properly with Geeklog-1.5 (Dbman works
                       properly with Geeklog-1.4.x as well).
 

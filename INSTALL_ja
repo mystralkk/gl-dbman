@@ -73,6 +73,9 @@ $_DBMAN_CONF['backup_except']を編集してください。
 改訂履歴
 --------
 
+ver 0.5.1 2008-09-14  PHP-4.xで起こるエラーを避けるため、htmlentities(),
+                      html_entity_decode()関数を使用しないようにしました。
+
 ver 0.5.0 2008-07-26  Geeklog-1.5にも対応しました。1.4.xでも動作します。
 
 ver 0.4.7 2007-12-20  データベースの接頭辞($_DB_table_prefix)を考慮して、バック

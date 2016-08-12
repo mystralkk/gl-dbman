@@ -47,7 +47,7 @@ $_DBMAN_CONF = array();
 /**
 * the dbman plugin's version setting
 */
-$_DBMAN_CONF['version'] = '0.5.0';					// Plugin Version
+$_DBMAN_CONF['version'] = '0.5.1';					// Plugin Version
 
 //===============================================
 // Global settings
