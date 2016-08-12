@@ -6,7 +6,7 @@
 // +---------------------------------------------------------------------------+
 // | geeklog/plugins/dbman/functions.inc                                       |
 // +---------------------------------------------------------------------------+
-// | Copyright (C) 2008-2011 mystral-kk - geeklog AT mystral-kk DOT net        |
+// | Copyright (C) 2008-2012 mystral-kk - geeklog AT mystral-kk DOT net        |
 // |                                                                           |
 // | Constructed with the Universal Plugin                                     |
 // | Copyright (C) 2002 by the following authors:                              |
@@ -261,7 +261,7 @@ function DBMAN_loadConfig() {
 	if ($config->group_exists('dbman')) {
 		$temp = $config->get_config('dbman');
 		
-		if (is_array($temp) AND (count($temp) > 0)) {
+		if (isset($_DBMAN_CONF) AND is_array($_DBMAN_CONF) AND is_array($temp) AND (count($temp) > 0)) {
 			$_DBMAN_CONF = array_merge($_DBMAN_CONF, $temp);
 		}
 	}
@@ -278,6 +278,7 @@ function DBMAN_esc($str) {
 		array(   '<',    '>',     '&',      '"',      "'"),
 		$str
 	);
+	
 	return htmlspecialchars($str, ENT_QUOTES, $LANG_CHARSET);
 }
 
@@ -287,7 +288,7 @@ function DBMAN_str($label) {
 	if (isset($LANG_DBMAN[$label])) {
 		return DBMAN_esc($LANG_DBMAN[$label]);
 	} else {
-		COM_errorLog('Dbman: Undefined index: ' . $label);
+		COM_errorLog(__FUNCTION__ . ': Undefined index: ' . $label);
 		return '(undefined)';
 	}
 }
@@ -351,9 +352,9 @@ function DBMAN_compareBackupFiles ($pFileA, $pFileB) {
 	
 	clearstatcache();
 	$lFiletimeA = filemtime($_CONF['backup_path'] . $pFileA);
-	clearstatcache();
 	$lFiletimeB = filemtime($_CONF['backup_path'] . $pFileB);
-	if ($lFiletimeA == $lFiletimeB) {
+	
+	if ($lFiletimeA === $lFiletimeB) {
 		return 0;
 	}
 	
