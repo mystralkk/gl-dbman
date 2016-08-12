@@ -2,30 +2,29 @@
 Install/Uninstall instruction
   for the Geeklog Dbman (Database Manager) plugin
 
-Copyright (C) 2006-2007 mystral-kk - geeklog AT mystral-kk DOT net
+Copyright (C) 2006-2008 mystral-kk - geeklog AT mystral-kk DOT net
                                      http://mystral-kk.net/
 ======================================================================
 
-#####  Features of Dbman plugin #####
+Features of Dbman plugin
+------------------------
 
 The Dbman plugin backups/restores database WITHOUT using mysqldump(.exe).  The
 Dbman plugin is published under GPL license.
 
-##### /Features of Dbman plugin #####
-
-BEFORE INSTALL:
+BEFORE INSTALL
+--------------
 
 #####  WARNING #####
 
-This plugin is still at its BETA release stage, so I'm afraid it might have some
-bugs.  Make a backup of your current geeklog database in advance using the
+This plugin is still at its BETA release stage, so I'm afraid it could have some
+bugs.  Make a backup of your current geeklog database IN ADVANCE using the
 built-in admin feature or phpMyAdmin.  Verify your backup feature is configured
 correctly and backup file is not 0 byte (This is worth a check).
 YOU HAVE BEEN WARNED!
 
-##### /WARNING #####
-
-INSTALL:
+INSTALL
+-------
 
 In the following steps,
 <geeklog_dir> is a directory where your system's config.php files resides,
@@ -54,12 +53,14 @@ Step 5: Set up security.  On install only the root users have access to Dbman
 administration and Viewing.  You can delegate control for either of these
 functions through the user and group editors.
 
-Step 6: (Optional)  Configure Dbman.  You can modify
+Step 6: (Optional)  Configure Dbman.  If you are using Geeklog-1.5 or newer,
+you can do this through admin's Configuration menu.  Otherwise, You can modify
 <geeklog-dir>/plugins/dbman/config.php.  By default, Dbman *** doesn't ***
 backup tables created by GUS (Geeklog Usage Stats) plugin, becuase they could
-be too large to backup even when you use phpMyAdmin.
+be too large to backup.
 
-UNINSTALL:
+UNINSTALL
+---------
 
 Step 1:  Log in to your Geeklog as a root user (admin).  Uninstall Dbman plugin
 in the plugin editor.
@@ -69,34 +70,36 @@ Step 2:  Delete the two plugin directories created in the install process:
 
 That's it.
 
-#####  REVISION HISTORY #####
+REVISION HISTORY
+----------------
 
-ver 0.4.6 2007/10/28  Fixed not to display Dbman icon in the CC panel for
+ver 0.5.0 2008-07-26  Modified to work properly with Geeklog-1.5 (Dbman works
+                      properly with Geeklog-1.4.x as well).
+
+ver 0.4.6 2007-10-28  Fixed not to display Dbman icon in the CC panel for
                       non-Dbman-admin users.
 
-ver 0.4.5 2007/04/05  Fixed a broken path in SQL console screen.  Thanks Tsuchi!
+ver 0.4.5 2007-04-05  Fixed a broken path in SQL console screen.  Thanks Tsuchi!
 
-ver 0.4.4 2007/03/25  Fixed to save CRLF correctly.
+ver 0.4.4 2007-03-25  Fixed to save CRLF correctly.
 
-ver 0.4.3 2006/08/06  Now you can download backupped files simply by clicking
-                      their respectives URL links.
-		      Added SQL console to input and execute SQL.
+ver 0.4.3 2006-08-06  Now you can download backupped files simply by clicking
+                      their respectives URL links.  Added SQL console to input
+                      and execute SQL.
 
-ver 0.4.2 2006/07/03  Modified to use $_Dbman_CONF['backup_except'] in deciding
+ver 0.4.2 2006-07-03  Modified to use $_Dbman_CONF['backup_except'] in deciding
                       whether a table's contents should not be backupped.  By
-		      default, Dbman *** doesn't *** backup tables created by
-		      GUS (Geeklog Usage Stats) plugin.  If you'd like to change
-		      this, edit $_DBMAN_CONF['backup_except'] in
-		      <geeklog_dir>/plugins/dbman/config.php.
+                      default, Dbman *** doesn't *** backup tables created by
+                      GUS (Geeklog Usage Stats) plugin.  If you'd like to change
+                      this, edit $_DBMAN_CONF['backup_except'] in
+                      <geeklog_dir>/plugins/dbman/config.php.
 
-ver 0.4.1 2006/07/03  Modified to backup records in small chunks (default 100)
+ver 0.4.1 2006-07=03  Modified to backup records in small chunks (default 100)
                       to avoid "MySQL Client Out of Memory" error.  Modfied
-		      to enabled plugin_upgrade_Dbman() to work properly.
+                      to enabled plugin_upgrade_Dbman() to work properly.
 
-ver 0.4   2006/05/04  Implemented a feature of restoring data from backup file.
+ver 0.4   2006-05-04  Implemented a feature of restoring data from backup file.
 
-ver 0.3.1 2006/04/28  Modified to save NULL values correctly.
+ver 0.3.1 2006-04-28  Modified to save NULL values correctly.
 
 ver 0.3               Initial version.
-
-##### /REVISION HISTORY #####
