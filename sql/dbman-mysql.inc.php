@@ -95,15 +95,70 @@ $dbman_blob_types = array(
 		return '`' . $item . '`';
 	}
 
-//  Returns quoted string.  If you use PHP 4 < 4.3.0, replace 'mysql_real_escape_string'
-//  with 'mysql_escape_string'.
+//  Returns quoted string.
 
 	function dbman_quoteString($item) {
 		$item = str_replace(array("\r\n", "\r", "\n"), '\\r\\n', $item);
-		if (!get_magic_quotes_gpc()) {
+		if (! get_magic_quotes_gpc()) {
 			$item = addslashes($item);
 		}
 		return "'" . $item . "'";
+	}
+
+//  Checks if the designated table has any BLOB field
+//  @parameters:
+//    $table_name (string) the table name to check for
+//
+//  @return (boolean) true = has a BLOB field, false = none
+
+	function dbman_isHasBLOBField($table_name) {
+		global $dbman_blob_types;
+		
+		$defs = explode("\n", dbman_getTableDef($table_name));
+		foreach ($defs as $def) {
+			if (eregi('^[ ]*`(.*)`[ ]+([a-zA-Z0-9_]*).*$', $def, $match) > 0) {
+				$column_name = $match[1];
+				$column_def  = strtoupper(trim($match[2]));
+				if (in_array($column_def, $dbman_blob_types)) {
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
+
+// Returns tables name included in the {$filename} file
+// backquote char '`' may be mysql-specific
+
+	function dbman_getTableNameFromBackup($filename) {
+	
+		$retval = array();
+	
+		if (substr($filename, -3) == '.gz') {
+			$fh = gzopen($filename, "r");
+			if ($fh === false) {
+				return $retval;
+			} else {
+				$f = '';
+				while (! gzeof($fh)) {
+					$f .= gzread($fh, 10000);
+				}
+				gzclose($fh);
+			}
+		} else {
+			$f = file_get_contents($filename);
+		}
+		$f = str_replace(array("\r\n", "\r"), "\n", $f);
+		$f = explode("\n", trim($f));
+		
+		foreach ($f as $line) {
+			if (eregi("CREATE[ ]+TABLE[ ]+`(.*)`[ ]*\(", $line, $match) > 0) {
+				$retval[] = $match[1];
+			}
+		}
+		
+		return $retval;
 	}
 
 ?>

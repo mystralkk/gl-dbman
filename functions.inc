@@ -2,7 +2,7 @@
 
 // Reminder: always indent with 4 spaces (no tabs). 
 // +---------------------------------------------------------------------------+
-// | Geeklog Dbman Plugin 0.3 for Geeklog - The Ultimate Weblog                |
+// | Geeklog Dbman Plugin 0.3.1 for Geeklog - The Ultimate Weblog              |
 // +---------------------------------------------------------------------------+
 // | functions.inc   Dbman plugin general functions file                       |
 // +---------------------------------------------------------------------------+
@@ -51,23 +51,24 @@
 	$baseurl = $_CONF['site_admin_url'] . '/plugins/dbman';
 	$dbman_menu = array(
 		'admin' => array(
-								'url' => $_CONF['site_admin_url'],
-								'text' => $LANG_ADMIN['admin_home']
+					'url' => $_CONF['site_admin_url'],
+					'text' => $LANG_ADMIN['admin_home']
 		),
 		'backup' => array(
-								'url' => $baseurl . '/index.php?mode=backup',
-								'text' => $LANG_DBMAN['menu_backup']
+					'url' => $baseurl . '/index.php?cmd=backup_option',
+					'text' => $LANG_DBMAN['menu_backup']
 		),
 		'list' => array(
-								'url' => $baseurl . '/index.php',
-								'text' => $LANG_DBMAN['menu_list']
-		),
-		'restore' => array(
-								'url' => $baseurl . '/index.php?mode=restore',
-								'text' => $LANG_DBMAN['menu_restore']
+					'url' => $baseurl . '/index.php',
+					'text' => $LANG_DBMAN['menu_list']
 		)
 	);
-	
+/*  This functions is under development
+	$dbman_menu['restore'] = array(
+					'url' => $baseurl . '/index.php?cmd=restore_select',
+					'text' => $LANG_DBMAN['menu_restore']
+	);
+*/
 // +---------------------------------------------------------------------------+
 // | Geeklog Plugin API Implementations                                        |
 // +---------------------------------------------------------------------------+
@@ -150,7 +151,7 @@ function plugin_getmenuitems_dbman()
 		global $_CONF, $baseurl;
 
 		if (SEC_hasRights('dbman.edit')) {
-			return array('dbman', $baseurl . '/index.php', '');
+			return array('DBMan', $baseurl . '/index.php', '');
     }
 	}
 
@@ -234,7 +235,21 @@ function plugin_uninstall_dbman($installCheck = '')
 /*
  *  Helper Functions
  */
- 
+
+// Check if the {$filename} file is actually created
+
+function isCreated($filename) {
+	
+	clearstatcache();
+	$retval = file_exists($filename);
+	if ($retval) {
+		clearstatcache();
+		$retval = (@filesize($filename) > 0);
+	}
+	
+	return $retval;
+}
+
 function DBMAN_compareBackupFiles ($pFileA, $pFileB) {
 	global $_CONF;
 
@@ -279,12 +294,19 @@ function DBMAN_listBackupFiles() {
  * @return (string) backup options in HTML format
  */
 
-function DBMAN_backupoptions($add_drop_table, $backup_blob, $compress_data,
+function DBMAN_backupOptions($add_drop_table, $backup_blob, $compress_data,
 	$download_as_file) {
 
 	global $_CONF, $LANG_DBMAN, $dbman_menu, $baseurl;
 	require_once($_CONF['path_system'] . 'lib-admin.php');
-	
+
+// checks if DB has any BLOB field
+
+	$has_blob = false;
+	$table_names = dbman_getTableList();
+	foreach ($table_names as $table_name) {
+		$has_blob = $has_blob || dbman_isHasBLOBField($table_name);
+	}
 	$retval = '<form action="./index.php" method="post">';
 	$menu_arr = array (
 			$dbman_menu['admin'],
@@ -301,16 +323,18 @@ function DBMAN_backupoptions($add_drop_table, $backup_blob, $compress_data,
 	$str_compress_data    = $compress_data ? 'checked="checked"' : '';
 	$str_download_as_file = $download_as_file ? 'checked="checked"' : '';
 
-	$data_arr = array(
-		array(
+	$data_arr = array();
+	$data_arr[] = array(
 			'option' => "<input name=\"add_drop_table\" type=\"checkbox\" {$str_add_drop_table}>"
 				. "{$LANG_DBMAN['add_drop_table']}"
-		),
-		array(
+	);
+	
+	if ($has_blob) {
+		$data_arr[] = array(
 			'option' => "<input name=\"backup_blob\" type=\"checkbox\" {$str_backup_blob}>"
 				. "{$LANG_DBMAN['backup_blob']}"
-		)
-	);
+		);
+	}
 	
 	if (function_exists('gzopen')) {
 		$data_arr[] = array(
@@ -318,6 +342,7 @@ function DBMAN_backupoptions($add_drop_table, $backup_blob, $compress_data,
 				. "{$LANG_DBMAN['compress_data']}"
 		);
 	}
+	
 	$data_arr[] = array(
 			'option' => "<input name=\"download_as_file\" type=\"checkbox\" {$str_download_as_file}>" . "{$LANG_DBMAN['download_as_file']}"
 	);
@@ -330,8 +355,7 @@ function DBMAN_backupoptions($add_drop_table, $backup_blob, $compress_data,
 	);
 
 	$retval .= ADMIN_simpleList("", $header_arr, $text_arr, $data_arr, $menu_arr);
-	$retval .= '<input name="mode" type="hidden" value="backup">';
-	$retval .= '<input name="cmd" type="hidden" value="do_backup">';
+	$retval .= '<input name="cmd" type="hidden" value="backup">';
 	$retval .= "<input name='submit' type='submit' value='{$LANG_DBMAN['backup_now']}'>";
 	$retval .= '</form>';
 	return $retval;
@@ -343,7 +367,7 @@ function DBMAN_backupoptions($add_drop_table, $backup_blob, $compress_data,
  * @return (string) restore options in HTML format
  */
 
-function DBMAN_restoreoptions($restore_blob) {
+function DBMAN_restoreSelectFile() {
 
 	global $_CONF, $LANG_DBMAN, $dbman_menu, $baseurl;
 	require_once($_CONF['path_system'] . 'lib-admin.php');
@@ -378,27 +402,106 @@ function DBMAN_restoreoptions($restore_blob) {
 		'title' => $LANG_DBMAN['menu_restore']
 	);
 	$retval .= ADMIN_simpleList("", $header_arr, $text_arr, $data_arr, $menu_arr);
-
-	$str_restore_blob = $restore_blob ? 'checked="checked"' : '';
-	$retval .= '<table class=\'plugin\'>';
-	$retval .= "<tr><th>{$LANG_DBMAN['option']}</th></tr>";
-	$retval .= "<tr><td><input name=\"restore_blob\" type=\"checkbox\" {$str_restore_blob}>{$LANG_DBMAN['restore_blob']}</td></tr>";
-	$retval .= '</table>';
-	$retval .= '<input name="mode" type="hidden" value="restore">';
-	$retval .= '<input name="cmd" type="hidden" value="restore_next">';
+	$retval .= '<input name="cmd" type="hidden" value="restore_option">';
 	$retval .= "<input name='submit' type='submit' value='{$LANG_DBMAN['next']}'>";
 	$retval .= '</form>';
 	return $retval;
 }
 
 /*
- * List backup files ('geeklog_db_backup_YYYY_MM_DD_hh:mm:ss.sql[.gz]')
+ *  Returns restore options in HTML format.  The options are:
+ *    1. which table to restore (table strcuture and/or data)
+ *    2. whther to restore BLOB fields if any
+ */
+
+function DBMAN_restoreOption($filename, $restore_blob = false) {
+	global $_CONF, $LANG_DBMAN, $dbman_menu, $baseurl;
+	require_once($_CONF['path_system'] . 'lib-admin.php');
+	
+	$retval = '<form action="./index.php" method="post">';
+	$menu_arr = array (
+			$dbman_menu['admin'],
+			$dbman_menu['list'],
+			$dbman_menu['backup']
+	);
+
+	$link_to_table = "<br><input type='button' value='" . $LANG_DBMAN["check_all"]
+	               . "' onClick='chTableOn()'><br>"
+								 . "<input type='button' value='" . $LANG_DBMAN["uncheck_all"]
+								 . "' onClick='chTableOff()'>";
+	$link_to_data  = "<br><input type='button' value='" . $LANG_DBMAN["check_all"]
+	               . "' onClick='chDataOn()'><br>"
+								 . "<input type='button' value='" . $LANG_DBMAN["uncheck_all"]
+								 . "' onClick='chDataOff()'>";
+	
+	$header_arr = array(      # dislay 'text' and use table field 'option'
+		array(
+			'text' => $LANG_DBMAN['restore_header1'],
+			'field' => 'table_name'
+		),
+		array(
+			'text' => $LANG_DBMAN['restore_header2'] . $link_to_table,
+			'field' => 'table_structure'
+		),
+		array(
+			'text' => $LANG_DBMAN['restore_header3'] . $link_to_data,
+			'field' => 'table_data'
+		)
+	);
+
+	$hasBlob  = false;
+	$tables   = dbman_getTableNameFromBackup($filename);
+	$data_arr = array();
+	foreach ($tables as $t) {
+		$hasBlob = ($hasBlob or dbman_isHasBLOBField($t));
+		$data_arr[] = array(
+			'table_name' => $t,
+			'table_structure' => "<input name='restore_structure[]' type='checkbox' value='$t'>" . $LANG_DBMAN['restore'],
+			'table_data' => "<input name='restore_data[]' type='checkbox' value='$t'>" . $LANG_DBMAN['restore']
+		);
+	};
+	
+	// Add links to Javascript
+	$data_arr[] = array(
+		'table_name'      => $LANG_DBMAN["operation"],
+		'table_structure' => $link_to_table,
+		'table_data'      => $link_to_data
+	);
+	
+	$fname = pathinfo($filename);
+	$text_arr = array(
+		'has_menu' => true,
+		'instructions' => sprintf($LANG_DBMAN['db_explanation_restore_option'], $fname['basename']),
+		'icon' => $baseurl . '/images/dbman.png',
+		'title' => $LANG_DBMAN['menu_restore']
+	);
+
+	$retval .= ADMIN_simpleList("", $header_arr, $text_arr, $data_arr, $menu_arr) . '<hr>';
+	
+//  other options
+
+	if ($hasBlob) {
+		$retval .= "<table class=\"plugin\"><tr><th>{$LANG_DBMAN['other_options']}</th></tr>";
+		$retval .= "<tr><td><input name=\"restore_blob\" type=\"checkbox\" {$str_restore_blob}>" . $LANG_DBMAN['restore_blob'] . ($restore_blob ? 'checked="checked"' : '') . '</td></tr>';
+		$retval .= '</table>';
+	}
+
+	$retval .= '<input name="cmd" type="hidden" value="restore">';
+	$retval .= "<input name=\"filename\" type=\"hidden\" value=\"{$filename}\">";
+	$retval .= "<input name='submit' type='submit' value='{$LANG_DBMAN['restore_now']}'>";
+	$retval .= '</form>';
+	
+	return $retval;
+}
+
+/*
+ * List backup files ('databasename_db_backup_YYYY_MM_DD_hh:mm:ss.sql[.gz]')
  * in the /backups directory.
  *
  * @return (string) a list of backup files in HTML format
  */
 
-function DBMAN_listbackups() {
+function DBMAN_listBackups() {
 	global $_CONF, $_TABLES, $_IMAGE_TYPE, $LANG_ADMIN, $LANG_DBMAN;
 	global $dbman_menu, $baseurl;
 	
@@ -464,7 +567,7 @@ function DBMAN_listbackups() {
 
 function DBMAN_backup($add_drop_table = false, $backup_blob = false,
 	$compress_data = false, $download_as_file = false) {
-		
+	
 	global $_CONF, $_DB_host, $_DB_name, $_DB_dbms, $_DBMAN_CONF;
 	global $dbman_string_types, $dbman_blob_types;
 		
@@ -530,7 +633,6 @@ EOD1;
 	}
 
 	//	Get table contents
-	
 	foreach ($tables as $table) {
 	
 		//	Put table definition into $sql
@@ -556,7 +658,7 @@ EOD1;
 				$column_values = array();
 				foreach ($r as $column_name => $column_value) {
 					if (is_null($column_value)) {
-						$coulmn_value = 'NULL';
+						$column_value = 'NULL';
 					} else if ($is_to_be_quoted[$column_name]) {
 						$column_value = dbman_quoteString($column_value);
 					} else if ($is_blob[$column_name]) {
@@ -593,11 +695,11 @@ EOD1;
 		exit;
 	}
 	
-	$is_success  = false;			//  flag to show a success in saving
+	$isSuccess  = false;			//  flag to show a success in saving
 	$curdatetime = date("Y_m_d_H_i_s");
 	$backupfile  = "{$_CONF['backup_path']}{$_DB_name}_db_backup_{$curdatetime}.sql";
 	if (file_exists($backupfile) && ! is_writable($backupfile)) {
-		COM_errorLog("Dbman: Couldn't create a backup file..");
+		COM_errorLog("Dbman: Couldn't create a backup file.");
 		return 2;
 		exit;
 	}
@@ -605,39 +707,53 @@ EOD1;
 	//  If $compress_data is true, try to compress the data
 	if ($compress_data && function_exists('gzopen')) {
 		$backupfile .= '.gz';
-		$fh = @gzopen($backupfile, "wb9");
+		$fh = @gzopen($backupfile, "wb" . $_DBMAN_CONF['compression_level']);
 		if ($fh === false) {
-			COM_errorLog("Dbman: Couldn't write data into a backup-file.", 1);
+			COM_errorLog("Dbman: Couldn't open a backup-file for writing.", 1);
 		} else {
 			$rst = gzwrite($fh, $sql);
 			if ($rst === false) {
 				COM_errorLog("Dbman: Couldn't write data into a backup-file.", 1);
 				@gzclose($fh);
 			} else {
-				COM_errorLog("Dbman: Backup completed successfully.", 1);
-				$is_success = @gzclose($fh);
+				$isSuccess = @gzclose($fh);
+				if ($isSuccess) {
+					$isSuccess = isCreated($backupfile);
+					if ($isSuccess) {
+						COM_errorLog("Dbman: Backup completed successfully.", 1);
+					} else {
+						COM_errorLog("Dbman: Couldn't write data into a backup-file.", 1);
+					}
+				}
 			}
 		}
 	}
 	
 	//  If $compress_data is false, or when there is a failure to compress, save 
 	//  backup files without compression
-	if (!$is_success) {
+	if (! $isSuccess) {
 		$fh = @fopen($backupfile, "wb");
 		if ($fh === false) {
-			COM_errorLog("Dbman: Couldn't write data into a backup-file.", 1);
+			COM_errorLog("Dbman: Couldn't open a backup-file for writing.", 1);
 		} else {
 			$rst = fwrite($fh, $sql);
 			if ($rst === false) {
 				COM_errorLog("Dbman: Couldn't write data into a backup-file.", 1);
 			} else {
-				COM_errorLog("Dbman: Backup completed successfully.", 1);
+				$isSuccess = @fclose($fh);
+				if ($isSuccess) {
+					$isSuccess = isCreated($backupfile);
+					if ($isSuccess) {
+						COM_errorLog("Dbman: Backup completed successfully.", 1);
+					} else {
+						COM_errorLog("Dbman: Couldn't write data into a backup-file.", 1);
+					}
+				}
 			}
-			$is_success = @fclose($fh);
 		}
 	}
 
-	if (! $is_success) {		// couldn't backup at all
+	if (! $isSuccess) {		// couldn't backup at all
 		return 2;
 		exit;
 	} else {
@@ -660,21 +776,34 @@ EOD1;
 
 /*
  * Restore from a designated backup file
+ *
  *   ('geeklog_db_backup_YYYY_MM_DD_hh:mm:ss.sql[.gz]') in the /backups directory.
  *
  * @parameters:
- *   $filename (string)         : the full path of a backup file residing in the
- *                                  /backups directory
- *   $restore_blob (boolean)    : if true, tries to restore blob fields as well by
- *                                 analyzing comment fields.  If there is no
- *                                 commented out data, this functions writes
- *                                 (BLOB) into the field
+ *   $filename (string)         : the full path of a backup file
+ *   $structures_arr (array of string): an array of table names to restore their
+ *                                structures
+ *   $data_arr (array of string): an array of table names to restore their data
  *
- * @return (int) 0 = success, 1 = success(file downloaded), 2 = failure
+ *   $restore_blob (boolean)    : if true, tries to restore blob fields as well by
+ *                                analyzing comment fields written by Dbman.  If
+ *                                there is no commented-out data, this functions
+ *                                writes '(BLOB)' into the field
+ *
+ * @return (int) true = success, false = failure
  */
 
-function DBMAN_restore($filename, $restore_blob = false) {
-
+function DBMAN_restore($filename, $structures_arr, $data_arr, $restore_blob = false) {
+	
+	for ($i = 0; $i < count($structures_arr); $i ++) {
+		echo $structures_arr[$i] . "<br>";
+	}
+	echo "<hr>";
+	for ($i = 0; $i < count($data_arr); $i ++) {
+		echo $data_arr[$i] . "<br>";
+	}
+	exit;
+	return false;
 }
 
 ?>

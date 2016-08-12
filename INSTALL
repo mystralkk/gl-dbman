@@ -1,39 +1,52 @@
-Install/Uninstall instruction for the Geeklog Yabackup plugin.
+Install/Uninstall instruction for the Geeklog DBMan (Database Manager) plugin.
 
 BEFORE INSTALL:
 
-#####  CAUTION #####
+#####  WARNING #####
 
-This plugin **DOESN'T** support FOREIGN KEY or BLOB field.
+This plugin is still at its alpha release stage, so I'm afraid it might have some
+bugs.  Make a backup of your current geeklog database using the built-in admin
+feature in advance.  Verify your backup feature is configured correctly and backup
+file is not 0 byte (This is worth a check).  YOU HAVE BEEN WARNED!
 
-##### /CAUTION #####
+##### /WARNING #####
 
 INSTALL:
 
-Step 1:  Uncompress the Yabackup plugin archive while in the <geeklog_dir>/plugins directory.  The archive will
-create a directory called Yabackup in the plugins directory.
+Step 1:  Uncompress the DBMan plugin archive (dbman-x.y.tar.gz) while in the
+<geeklog_dir>/plugins directory.  The archive will create a directory named
+ dbman in the plugins directory.
 
-Step 2:  Create the admin directory.  Under your admin/plugins/ directory create a directory called yabackup.
+Step 2:  Create the admin directory.  Under your admin/plugins/ directory create
+a directory named dbman.  DBMan doesn't need a 'public_html/dbman' directory.
 
-Step 3:  Change to your <geeklog_dir>/plugins/Yabackup/ directory.  Copy the files in the admin directory 
-to the admin/plugins/Yabackup/ directory your created in step 2.
+Step 3:  Change to your <geeklog_dir>/plugins/dbman/admin directory.  Copy the files
+in the directory to the admin/plugins/dbman/ directory your created in step 2.
 
-Step 4:  Log in to your Geeklog as a root user and run install.php in your admin/plugins/yabackup/ directory.
-The install page will tell you if the install was successful or not.  If not examine Geeklog system errorlog
-for possible problems.
+Step 4:  Log in to your Geeklog as a root user (admin) and install dbman plugin
+in the plugin editor.  The install page will tell you if the install was successful
+or not.  If not, examine Geeklog system errorlog for possible problems.
 
-The Yabackup plugin should now be installed and functioning.  Clicking on the Yabackup Icon will
-take you to the admin page.  
+The DBMan plugin should now be installed and functioning.  Clicking on the DBMan
+Icon will take you to the admin page.
 
-Step 5: Set up security.  On install only the root users have access to Yabackup administration and Viewing.  
-You can delegate control for either of these functions through the user and group editors.
+Step 5: Set up security.  On install only the root users have access to DBMan
+administration and Viewing.  You can delegate control for either of these functions
+through the user and group editors.
 
 UNINSTALL:
 
-Step 1:  Run the install.php page in your admin/plugins/yabackup directory.  This will remove
- all the data concerned with Yabackup plugin from your database.
+Step 1:  Log in to your Geeklog as a root user (admin).  Uninstall dbman plugin
+in the plugin editor.
 
-Step 2:  Delete the two plugin directories created in the install process:  <geeklog-dir>plugins/Yabackup/ 
-and <admin>/plugins/Yabackup/
+Step 2:  Delete the two plugin directories created in the install process:
+<geeklog-dir>plugins/dbman/ and <admin>/plugins/dbman/
 
 That's it.
+
+#####  REVISION HISTORY #####
+
+ver 0.3.1 2006/04/28 Modified to save NULL values correctly.
+ver 0.3              Initial version
+
+##### /REVISION HISTORY #####

@@ -1,4 +1,4 @@
-This directory contains the language files for the yabackup plugin.
+This directory contains the language files for the DBMan plugin.
 The plugin will pick the appropriate language file automatically based on
 the language settings in your user settings or the default language in config.php.
 

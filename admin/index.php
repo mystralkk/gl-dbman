@@ -2,7 +2,7 @@
 
 // Reminder: always indent with 4 spaces (no tabs). 
 // +---------------------------------------------------------------------------+
-// | Geeklog Dbman Plugin 0.3 for Geeklog - The Ultimate Weblog                |
+// | Geeklog Dbman Plugin 0.3.1 for Geeklog - The Ultimate Weblog              |
 // +---------------------------------------------------------------------------+
 // | index.php   Dbman plugin admin index file                                 |
 // +---------------------------------------------------------------------------+
@@ -52,11 +52,32 @@ if (!SEC_hasRights('dbman.edit')) {
     exit;
 }
 
+// Javascript to be used in restore_option
+
+$js = <<< EOD
+<script type="text/javascript">
+<!--
+// Check all
+function chTableOn(){
+  for(i=0; i<chn.length; i++) {
+    document.nForm.elements[chn[i]].checked = true;
+  }
+}
+// UnCheck all
+function chTableOff(){
+  for(i=0; i<chn.length; i++) {
+    document.nForm.elements[chn[i]].checked = false;
+  }
+}
+//-->
+</script>
+EOD;
+
 // ==================================================================
 // 		Main function
 // ==================================================================
 
-// the three values set below are meaningful only the first time this file is called
+// the five values set below are meaningful only the first time this file is called
 
 $add_drop_table   = $_DBMAN_CONF['add_drop_table'];
 $backup_blob      = $_DBMAN_CONF['backup_blob'];
@@ -66,30 +87,25 @@ $restore_blob     = $_DBMAN_CONF['restore_blob'];
 
 // decides whether to list or backup or restore
 
-$mode = 'list';
-$vars = array_merge($_GET, $_POST);
-if (isset($vars['mode'])) {
-	if ($vars['mode'] == 'backup') {
-		$mode = 'backup';
-	} else if ($vars['mode'] == 'restore') {
-		$mode = 'restore';
-	}
+$cmd = 'list';
+
+if (isset($_GET['cmd'])) {
+	$cmd = COM_applyFilter($_GET['cmd']);
+} else if (isset($_POST['cmd'])) {
+	$cmd = COM_applyFilter($_POST['cmd']);
 }
 
-$display = COM_siteHeader();;
+$is_submit = isset($_POST['submit']);
+$display   = COM_siteHeader();;
 
-switch ($mode) {
-case 'list':
-	$display .= DBMAN_listbackups();
-	break;
+switch (strtolower($cmd)) {
 case 'backup':
-	if (isset($_POST['submit']) && isset($_POST['cmd']) && $_POST['cmd'] == 'do_backup') {
+	if ($is_submit) {
 		$add_drop_table   = isset($_POST['add_drop_table']);
 		$backup_blob      = isset($_POST['backup_blob']);
 		$compress_data    = isset($_POST['compress_data']);
 		$download_as_file = isset($_POST['download_as_file']);
-		$rst = DBMAN_backup($add_drop_table, $backup_blob, $compress_data,
-			$download_as_file);
+		$rst = DBMAN_backup($add_drop_table, $backup_blob, $compress_data, $download_as_file);
 		if ($rst == 2) {		//  failed
 			$display .= '<p style="font-size: 20px; font-weight: bold; color: red;">' . $LANG_DBMAN['backup_failure'] . '</p>';
 			break;
@@ -105,36 +121,61 @@ case 'backup':
 			}
 		}
 	}
+	/* fall through to 'backup_option' */
 	
-	// show backup options
-	
-	$display .= DBMAN_backupoptions($add_drop_table, $backup_blob, $compress_data,
+case 'backup_option':
+	$display .= DBMAN_backupOptions($add_drop_table, $backup_blob, $compress_data,
 		$download_as_file);
 	break;
-case 'restore':
-	if (isset($_POST['submit']) && isset($_POST['cmd']) 
-	 && $_POST['cmd'] == 'do_restore') {
-	 	if (isset($_POST['filename'])) {
-			$filename = COM_applyFilter($_POST['filename']);	//  maybe not very good
-			$restore_blob = isset($_POST['restore_blob']);
-			if (DBMAN_restore($filename, $restore_blob)) {
-				$display  = COM_refresh($_CONF['site_admin_url'] . '/plugins/dbman/index.php') . $display;
-				$display .= '<p style="font-size: 20px; font-weight: bold; color: green;">' . $LANG_DBMAN['resore_success'] . '</p>';
-				$display .= COM_siteFooter(1);
-				echo $display;
-				exit;
-			} else {
-				$display .= '<p style="font-size: 20px; font-weight: bold; color: red;">'
-				  . $LANG_DBMAN['restore_failure'] . '</p>';
-			}
+	
+case 'restore_select':
+	$display .= DBMAN_restoreSelectFile();
+	break;
+
+case 'restore_option':
+	$p = strpos(strtolower($display), '</head>');	// Insert Javascript
+	$display = substr($display, 0, $p) . $js . substr($display, $p);
+	if ($is_submit) {
+		if (isset($_POST['filename'])) {
+			$filename = COM_applyFilter($_POST['filename']);	//  not good enough
+			$display .= DBMAN_restoreOption($filename, $restore_blob);
+			break;
 		} else {
+			$display  = COM_refresh($_CONF['site_admin_url'] . '/plugins/dbman/index.php?cmd=restore_select') . $display;
 			$display .= '<p style="font-size: 20px; font-weight: bold; color: red;">' . $LANG_DBMAN['no_file_selected'] . '</p>';
+			$display .= COM_siteFooter(1);
+			echo $display;
+			exit;
+			break;
 		}
 	}
+	break;
 	
-	// show restore options
+case 'restore':
+	if ($is_submit) {
+		$filename = COM_applyFilter($_POST['filename']);	//  maybe not very good
+		if (isset($_POST['restore_structure'])) {
+			$restore_structure = $_POST['restore_structure'];
+		}
+		if (isset($_POST['restore_data'])) {
+			$restore_data = $_POST['restore_data'];
+		}
+		$restore_blob = isset($_POST['restore_blob']);
+		if (DBMAN_restore($filename, $restore_structure, $restore_data, $restore_blob)) {
+			$display  = COM_refresh($_CONF['site_admin_url'] . '/plugins/dbman/index.php') . $display;
+			$display .= '<p style="font-size: 20px; font-weight: bold; color: green;">' . $LANG_DBMAN['resore_success'] . '</p>';
+			$display .= COM_siteFooter(1);
+			echo $display;
+			exit;
+		} else {
+			$display .= '<p style="font-size: 20px; font-weight: bold; color: red;">'
+				  . $LANG_DBMAN['restore_failure'] . '</p>';
+		}
+	}
+	break;
 	
-	$display .= DBMAN_restoreoptions($restore_blob);
+case 'list':
+	$display .= DBMAN_listBackups();
 	break;
 }
 

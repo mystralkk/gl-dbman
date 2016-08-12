@@ -43,7 +43,7 @@ $_DBMAN_CONF = array();
  * @global array $_DBMAN_CONF['version']
  */
 
-$_DBMAN_CONF['version'] = '0.3';					// Plugin Version
+$_DBMAN_CONF['version'] = '0.3.1';					// Plugin Version
 
 /*
  * the flag to decide whether to add "DROP TABLE IF EXISTS ...".
@@ -69,6 +69,13 @@ $_DBMAN_CONF['backup_blob'] = false;
  */
 
 $_DBMAN_CONF['compress_data'] = true;
+
+/*
+ * the flag to indicate compression level:
+ * valid values: 1 (largest size) - 9 (smallest size)
+ */
+
+$_DBMAN_CONF['compression_level'] = 9;
 
 /*
  * the flag to decide whether to download backup files.
