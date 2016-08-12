@@ -2,7 +2,7 @@
 
 // Reminder: always indent with 4 spaces (no tabs). 
 // +---------------------------------------------------------------------------+
-// | Geeklog Dbman Plugin for Geeklog - The Ultimate Weblog                    |
+// | Dbman Plugin for Geeklog - The Ultimate Weblog                            |
 // +---------------------------------------------------------------------------+
 // | functions.inc   Dbman plugin general functions file                       |
 // +---------------------------------------------------------------------------+
@@ -28,49 +28,53 @@
  * Dbman plugin general functions file
  */
 
-	global $_DB_dbms;				// needs to be declared while UnInstallation
+global $_DB_dbms;				// needs to be declared while UnInstallation
 
-	$langfile = $_CONF['path'] . 'plugins/dbman/language/' . $_CONF['language'] . '.php';
-	if (file_exists ($langfile)) {
-	    include_once ($langfile);
-	} else {
-    	include_once ($_CONF['path'] . 'plugins/dbman/language/english.php');
-	}
-	
-	require_once ($_CONF['path'] . 'plugins/dbman/config.php');
+if ( !defined( 'LB' ) ) {
+	define( 'LB', "\n" );
+}
+
+$langfile = $_CONF['path'] . 'plugins/dbman/language/' . $_CONF['language'] . '.php';
+if (file_exists ($langfile)) {
+    include_once ($langfile);
+} else {
+	include_once ($_CONF['path'] . 'plugins/dbman/language/english.php');
+}
+
+require_once ($_CONF['path'] . 'plugins/dbman/config.php');
 
 //	Include DB-specific functions
 
-	if (strcasecmp($_DB_dbms, 'mysql') == 0) {
-		include_once('sql/dbman-mysql.inc.php');
-	} else {
-		COM_errorLog("Database type '{$_DB_dbms}' is not supported in Dbman.", 1);
-		exit;
-	}
+if (strcasecmp($_DB_dbms, 'mysql') == 0) {
+	include_once('sql/dbman-mysql.inc.php');
+} else {
+	COM_errorLog("Database type '{$_DB_dbms}' is not supported in Dbman.", 1);
+	exit;
+}
 
-	$baseurl = $_CONF['site_admin_url'] . '/plugins/dbman';
-	$dbman_menu = array(
-		'admin' => array(
-					'url'  => $_CONF['site_admin_url'],
-					'text' => $LANG_ADMIN['admin_home']
-		),
-		'backup' => array(
-					'url'  => $baseurl . '/index.php?cmd=backup_option',
-					'text' => $LANG_DBMAN['menu_backup']
-		),
-		'list' => array(
-					'url'  => $baseurl . '/index.php',
-					'text' => $LANG_DBMAN['menu_list']
-		),
-		'restore' => array(
-					'url'  => $baseurl . '/index.php?cmd=restore_select',
-					'text' => $LANG_DBMAN['menu_restore']
-		),
-		'console' => array(
-					'url' => $baseurl . '/index.php?cmd=console',
-					'text' => $LANG_DBMAN['menu_console']
-		)
-	);
+$baseurl = $_CONF['site_admin_url'] . '/plugins/dbman';
+$dbman_menu = array(
+	'admin' => array(
+				'url'  => $_CONF['site_admin_url'],
+				'text' => $LANG_ADMIN['admin_home']
+	),
+	'backup' => array(
+				'url'  => $baseurl . '/index.php?cmd=backup_option',
+				'text' => $LANG_DBMAN['menu_backup']
+	),
+	'list' => array(
+				'url'  => $baseurl . '/index.php',
+				'text' => $LANG_DBMAN['menu_list']
+	),
+	'restore' => array(
+				'url'  => $baseurl . '/index.php?cmd=restore_select',
+				'text' => $LANG_DBMAN['menu_restore']
+	),
+	'console' => array(
+				'url' => $baseurl . '/index.php?cmd=console',
+				'text' => $LANG_DBMAN['menu_console']
+	)
+);
 
 /*
  *  DBMAN_timer class -- prevents the script from running out of time
@@ -666,7 +670,7 @@ EOD1;
 		$is_to_be_quoted = array();
 		$is_blob         = array();
 		$def = dbman_getTableDef($table['name']);
-		$lines = explode("\n", $def);
+		$lines = explode(LB, $def);
 		$new_lines = array();
 		for ($i = 0; $i < count($lines); $i ++) {
 			$line = $lines[$i];
@@ -691,11 +695,11 @@ EOD1;
 									// at the end of the previous line.
 					$new_lines[$i - 1] = substr($new_lines[$i - 1], 0, strlen($new_lines[$i - 1]) - 1);
 				}
-				$foreign_keys[] = "ALTER TABLE " . dbman_quoteItem($table['name']) . "\n" 
+				$foreign_keys[] = "ALTER TABLE " . dbman_quoteItem($table['name']) . LB 
 					. "  ADD " . $line . ";";
 			}
 		}
-		$tables[$table['name']]['def']             = implode("\n", $new_lines);
+		$tables[$table['name']]['def']             = implode(LB, $new_lines);
 		$tables[$table['name']]['is_to_be_quoted'] = $is_to_be_quoted;
 		$tables[$table['name']]['is_blob']         = $is_blob;
 		$timer->update();
@@ -706,19 +710,19 @@ EOD1;
 	foreach ($tables as $table) {
 	
 		//	Append table definition to $sql
-		$sql .= "--\n";
-		$sql .= '-- Table structure for table ' . dbman_quoteItem($table['name']) . "\n";
-		$sql .= "--\n\n";
+		$sql .= '--' . LB;
+		$sql .= '-- Table structure for table ' . dbman_quoteItem($table['name']) . LB;
+		$sql .= '--' . LB . LB;
 		if ($add_drop_table) {
-			$sql .= 'DROP TABLE IF EXISTS ' . dbman_quoteItem($table['name']) . ";\n\n";
+			$sql .= 'DROP TABLE IF EXISTS ' . dbman_quoteItem($table['name']) . ';' . LB . LB;
 		}
-		$sql .= $tables[$table['name']]['def'] . "\n\n";
-		$sql .= "--\n";
-		$sql .= '-- Dumping data for table ' . dbman_quoteItem($table['name']) . "\n";
-		$sql .= "--\n\n";
+		$sql .= $tables[$table['name']]['def'] . LB . LB;
+		$sql .= '--' . LB;
+		$sql .= '-- Dumping data for table ' . dbman_quoteItem($table['name']) . LB;
+		$sql .= '--' . LB . LB;
 
 		if (DBMAN_isBackupExcept($table['name'])) {
-			$sql .= "-- (skipped backuping {$table['name']})\n\n";
+			$sql .= "-- (skipped backuping {$table['name']})" . LB . LB;
 			continue;
 		}
 
@@ -756,20 +760,20 @@ EOD1;
 					if ($has_blob_field && $backup_blob) {
 						$sql .= '-- Q:';
 					}
-					$sql .= "INSERT INTO " . dbman_quoteItem($table['name']) . " VALUES (" . implode(',' , $column_values) . ");\n";
+					$sql .= "INSERT INTO " . dbman_quoteItem($table['name']) . " VALUES (" . implode(',' , $column_values) . ');' . LB;
 				}
 			}
 
 			$timer->update();
 		} /* End of for-loop */
-		$sql .= "\n";
+		$sql .= LB;
 		$timer->update();
 	} /* End of foreach-loop */
 	
 	//  Append foreign key definitions if any
 	if (count($foreign_keys) > 0) {
-		$sql .= "--\n-- FOREIGN KEY and CONSTRAINT definitions\n--\n\n";
-		$sql .= implode("\n", $foreign_keys) . "\n";
+		$sql .= '--' . LB . '-- FOREIGN KEY and CONSTRAINT definitions' . LB . '--' . LB . LB;
+		$sql .= implode(LB, $foreign_keys) . LB;
 	}
 	
 	//	Save data into a file in the 'backups' dir
@@ -928,8 +932,8 @@ function DBMAN_restore($filename, $structures_arr, $data_arr, $restore_blob = fa
 	
 	// Restore table contents
 	$data = file_get_contents($filename);
-	$data = str_replace(array("\r\n", "\r"), "\n", trim($data));
-	$data = explode("\n", $data);
+	$data = str_replace(array("\r\n", "\r"), LF, trim($data));
+	$data = explode(LB, $data);
 	for ($i = 0; $i < $num_data; $i ++) {
 		$table   = $data_arr[$i];
 //		$hasBlob = dbman_isHasBLOBField($table);
@@ -1047,7 +1051,8 @@ function DBMAN_execSQL() {
 		$SQL = str_replace(array("\r\n", "\n\r", "\r", "\n"), ' ', $SQL);
 		$retval .= "<br>{$LANG_DBMAN['sql_executed']}<br><p style='color: black; background-color: white; padding: 5px; border: solid 1px black;'>";
 		$retval .= htmlspecialchars($SQL, ENT_NOQUOTES) . "</p>{$LANG_DBMAN['sql_result']}<br>";
-		if (! preg_match('/^(SELECT|DELETE|UPDATE|INSERT)/i', $SQL)) {
+//		if (! preg_match('/^(SELECT|DELETE|UPDATE|INSERT)/i', $SQL)) {
+		if ( 1 == 0 ) {
 			$has_error = true;
 			$result = htmlspecialchars($LANG_DBMAN['sql_error_siud'], ENT_NOQUOTES);
 		} else {

@@ -2,8 +2,8 @@
 Install/Uninstall instruction
   for the Geeklog Dbman (Database Manager) plugin
 
-Copyright (C) 2006 mystral-kk - geeklog AT mystral-kk DOT net
-                                http://mystral-kk.net/
+Copyright (C) 2006-2007 mystral-kk - geeklog AT mystral-kk DOT net
+                                     http://mystral-kk.net/
 ======================================================================
 
 #####  Features of Dbman plugin #####
@@ -71,6 +71,7 @@ That's it.
 
 #####  REVISION HISTORY #####
 
+ver 0.4.4 2007/03/25  Fixed to save CRLF correctly.
 ver 0.4.3 2006/08/06  Now you can download backupped files simply by clicking
                       their respectives URL links.
 		      Added SQL console to input and execute SQL.

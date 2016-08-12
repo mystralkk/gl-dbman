@@ -2,7 +2,7 @@
 
 // Reminder: always indent with 4 spaces (no tabs). 
 // +---------------------------------------------------------------------------+
-// | Geeklog Dbman Plugin for Geeklog - The Ultimate Weblog                    |
+// | Dbman Plugin for Geeklog - The Ultimate Weblog                            |
 // +---------------------------------------------------------------------------+
 // | config.php   Dbman plugin configuration file                              |
 // +---------------------------------------------------------------------------+
@@ -44,7 +44,7 @@ $_DBMAN_CONF = array();
  * the dbman plugin's version setting
  */
 
-$_DBMAN_CONF['version'] = '0.4.3';					// Plugin Version
+$_DBMAN_CONF['version'] = '0.4.4';					// Plugin Version
 
 /*
  * the flag to decide whether to add "DROP TABLE IF EXISTS ...".

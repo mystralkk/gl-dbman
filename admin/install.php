@@ -42,7 +42,7 @@ $pi_name         = 'dbman';							// Plugin name
 $pi_display_name = 'dbman';							// Plugin display name
 $pi_version      = $_DBMAN_CONF['version'];			// Plugin Version
 $gl_version      = '1.4.0';							// GL Version plugin for
-$pi_url          = 'http://www.ddlinks.net/blog/';	// Plugin Homepage
+$pi_url          = 'http://mystral-kk.net/';		// Plugin Homepage
 
 // Security Feature to add
 
@@ -162,8 +162,11 @@ $T->set_var('admin_url', $_CONF['site_admin_url'] . '/plugins/' . $pi_name . '/i
 
 if ($action == 'install') {
 	if (plugin_install_dbman()) {
-		$install_msg = $LANG_DBMAN['install_success'];
-		$T->set_var('installmsg1', $install_msg);
+		echo COM_refresh( $_CONF['site_admin_url'] . '/plugins.php?msg=44' );
+		exit;
+
+//		$install_msg = $LANG_DBMAN['install_success'];
+//		$T->set_var('installmsg1', $install_msg);
 	} else {
 		$T->set_var('installmsg1', $LANG_DBMAN['install_failed']);
 	}

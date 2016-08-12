@@ -1,10 +1,10 @@
 <?php
 
 ###############################################################################
-# japanese_utf-8.php
+# japanese.php
 # This is the japanese_utf-8 language page for the Geeklog Dbman Plug-in!
 #
-# Copyright (C) 2006 mystral_kk - mystral_kk AT ddlinks DOT net
+# Copyright (C) 2006 mystral-kk - geeklog AT mystral-kk DOT net
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -21,7 +21,7 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #
 ###############################################################################
-# $Id$
+# $Id: japanese_utf-8.php,v 1.2 2006/07/03 04:43:02 kenji Exp $
 
 /*
  * This is the japanese_utf-8 language page for the Geeklog Dbman Plug-in! 
@@ -58,7 +58,7 @@ $LANG_DBMAN = array(
 	'db_explanation_backup' => 'データベースのバックアップを取るには「バックアップ作成」をクリックしてください。',
 	'db_explanation_list' => 'バックアップ/リストアを選択してください。',
 	'db_explanation_restore' => 'リストアするデータベースにチェックマークを入れから，「次へ」をクリックしてください。',
-	'db_explanation_restore_option' => '%s からリストアする際のオプションを選択してください。',  /* %s = backup file */
+	'db_explanation_restore_option' => '%s からリストアする際のオプションを選択してください。<strong>テーブル構造</strong>をチェックすると，テーブルが作り直されます（既存のデータは削除されます）。<strong>データ</strong>をチェックすると，既存のデータを削除せずにデータがリストアされます。重複するレコードがある場合は上書きされます。<br><strong>警告: リストアの機能は開発中の簡易的なものです。Dbman プラグインはどのテーブルをリストアするかどのレコードが上書きされるかは関知しません。データを使用中のテーブルにリストアしたり，リストアするレコードのサイズが大きすぎる場合は，リストアは失敗し，テーブルが破損する可能性があります。できる限り，phpMyAdmin等をお使いください。</strong>',  /* %s = backup file */
 	'download_as_file' => 'ファイルとしてダウンロードする',
 	'enabled' => 'アンインストールする前に，プラグインを無効にしてください。',
 	'install' => 'インストール',
@@ -67,7 +67,7 @@ $LANG_DBMAN = array(
   'install_failed' => 'インストールに失敗しました。エラーログをご覧ください。',
 	'install_header' => 'プラグインのインストール/アンインストール',
 	'install_success'	=> 'インストールに成功しました。',
-	'last_ten_backups' => '最近のバックアップ(10世代分)',
+	'last_ten_backups' => 'サーバーに保存されているバックアップ',
 	'menu_backup' => 'バックアップ作成',
 	'menu_list' => 'ファイル一覧',
 	'menu_restore' => 'データベースのリストア',
@@ -93,7 +93,18 @@ $LANG_DBMAN = array(
 	'uninstalled' => 'プラグインはインストールされていません。',
 	'uninstall_msg'	=> 'アンインストールに成功しました。',
 	'warning'  => '警告！　プラグインが有効なままです',
-	'dbman' => 'Dbman'
+	'dbman' => 'Dbman',
+// ver 0.4.3 -->
+	'invalid_filename' => 'ファイル名が不正です。',
+	'file_not_exist' => 'ファイルが存在しません。',
+	'lbl_delete_file' => 'チェックされたファイルを削除',
+	'ttl_delete_file' => 'バックアップファイルの削除',
+	'menu_console' => 'SQLコンソール',
+	'lbl_exec_sql' => 'SQLを実行',
+	'desc_exec_sql' => '下のテキストボックスに入力したSQLを実行します。SELECT, INSERT, UPDATE, DELETE文しか実行できません。',
+	'sql_executed' => '実行したSQL: ',
+	'sql_result' => '結果: ',
+	'sql_error_siud' => 'エラー！　SQLコンソールでは，SELECT, INSERT, DELETE, UPDATE しか実行できません。'
 );
 
 ?>
