@@ -6,7 +6,7 @@
 // +---------------------------------------------------------------------------+
 // | public_html/admin/plugins/dbman/index.php                                 |
 // +---------------------------------------------------------------------------+
-// | Copyright (C) 2008 mystral-kk - geeklog AT mystral-kk DOT net             |
+// | Copyright (C) 2008-2010 mystral-kk - geeklog AT mystral-kk DOT net        |
 // |                                                                           |
 // | Constructed with the Universal Plugin                                     |
 // | Copyright (C) 2002 by the following authors:                              |
@@ -109,7 +109,7 @@ switch (strtolower($cmd)) {
             $add_drop_table =   isset($_POST['add_drop_table']);
             $backup_blob      = isset($_POST['backup_blob']);
             $compress_data    = isset($_POST['compress_data']);
-            COM_errorLog($compress_data ? 'true' : 'false');
+            COM_errorLog($compress_data ? 'TRUE' : 'FALSE');
             $download_as_file = isset($_POST['download_as_file']);
             $rst = DBMAN_backup($add_drop_table, $backup_blob, $compress_data, $download_as_file);
             if ($rst == 2) {		//  failed

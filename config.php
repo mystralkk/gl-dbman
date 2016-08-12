@@ -6,7 +6,7 @@
 // +---------------------------------------------------------------------------+
 // | geeklog/plugins/dbman/config.php                                          |
 // +---------------------------------------------------------------------------+
-// | Copyright (C) 2008 mystral-kk - geeklog AT mystral-kk DOT net             |
+// | Copyright (C) 2008-2010 mystral-kk - geeklog AT mystral-kk DOT net        |
 // |                                                                           |
 // | Constructed with the Universal Plugin                                     |
 // | Copyright (C) 2002 by the following authors:                              |
@@ -51,7 +51,7 @@ $_DBMAN_CONF = array();
 /**
 * the dbman plugin's version setting
 */
-$_DBMAN_CONF['version'] = '0.5.3';					// Plugin Version
+$_DBMAN_CONF['version'] = '0.5.4';					// Plugin Version
 
 //===============================================
 // Global settings
@@ -62,7 +62,7 @@ $_DBMAN_CONF['version'] = '0.5.3';					// Plugin Version
 * SHOULD BE FALSE TO PREVENT ACCIDENTAL DAMAGE TO DATABASE.  SET THIS OPTION TO
 * TRUE ONLY IF YOU KNOW WHAT YOU DO.  YOU HAVE BEEN WARNED!
 */
-$_DBMAN_CONF['allow_restore'] = false;
+$_DBMAN_CONF['allow_restore'] = FALSE;
 
 //===============================================
 // Default settings for backup
@@ -72,7 +72,7 @@ $_DBMAN_CONF['allow_restore'] = false;
 * the flag to decide whether to add "DROP TABLE IF EXISTS ...".
 * For the compatibility with PhpMyAdminin, this should be set false.
 */
-$_DBMAN_CONF['add_drop_table'] = false;
+$_DBMAN_CONF['add_drop_table'] = FALSE;
 
 /**
 * the number of records to select data from database when the dbman plugin
@@ -87,14 +87,14 @@ $_DBMAN_CONF['chunk_size'] = 100;
 * flag is set true, the plugin will backup BLOB data in the base64 format.
 * Still, "INSERT INTO ..." SQL statements with BLOB are commented out.
 */
-//$_DBMAN_CONF['backup_blob'] = false;
+//$_DBMAN_CONF['backup_blob'] = FALSE;
 
 /**
 * the flag to decide whether to compress backup files.  If set true, the
 * dbman plugin tries to compress the data with Zlib.  In this case,
 * names of backup files are '*.sql.gz'.
 */
-$_DBMAN_CONF['compress_data'] = false;
+$_DBMAN_CONF['compress_data'] = FALSE;
 
 /**
 * the flag to indicate compression level:
@@ -105,7 +105,7 @@ $_DBMAN_CONF['compression_level'] = 8;
 /**
 * the flag to decide whether to download backup files.
 */
-$_DBMAN_CONF['download_as_file'] = false;
+$_DBMAN_CONF['download_as_file'] = FALSE;
 
 //===============================================
 // Additional settings for backup
@@ -123,7 +123,7 @@ $_DBMAN_CONF['backup_except'][] = "/^{$_DB_table_prefix}gus_/";
 /**
 * the flag to decide whether to backup with psedo-cron
 */
-$_DBMAN_CONF['cron_backup'] = false;
+$_DBMAN_CONF['cron_backup'] = FALSE;
 
 /**
 * Maximum number of backup files to be kept.  When set to 0, no backup file

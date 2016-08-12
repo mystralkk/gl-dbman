@@ -6,7 +6,7 @@
 // +---------------------------------------------------------------------------+
 // | geeklog/plugins/dbman/sql/dbman-mysql.inc                                 |
 // +---------------------------------------------------------------------------+
-// | Copyright (C) 2008 mystral-kk - geeklog AT mystral-kk DOT net             |
+// | Copyright (C) 2008-2010 mystral-kk - geeklog AT mystral-kk DOT net        |
 // |                                                                           |
 // | Constructed with the Universal Plugin                                     |
 // | Copyright (C) 2002 by the following authors:                              |
@@ -29,7 +29,7 @@
 // | Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.           |
 // +---------------------------------------------------------------------------+
 
-if (strpos(strtolower($_SERVER['PHP_SELF']), 'dbman-mysql.inc.php') !== false) {
+if (strpos(strtolower($_SERVER['PHP_SELF']), 'dbman-mysql.inc.php') !== FALSE) {
     die('This file can not be used on its own.');
 }
 
@@ -45,8 +45,8 @@ if (!defined('LB')) {
 * Data types to be quoted with dbman_quoteString()
 */
 $dbman_string_types = array(
-    'CHAR', 'VARCHAR', 'DATE', 'TIME', 'DATETIME', 'TINYTEXT', 'TEXT',
-    'MEDIUMTEXT', 'LONGTEXT', 'ENUM',
+    'CHAR', 'VARCHAR', 'DATE', 'TIME', 'DATETIME', 'TIMESTAMP', 'TINYTEXT',
+	'TEXT', 'MEDIUMTEXT', 'LONGTEXT', 'ENUM',
 );
 
 /**
@@ -61,8 +61,8 @@ $dbman_blob_types = array(
 */
 function dbman_getDBVersion() {
     $rst = mysql_query("SHOW VARIABLES");
-    if ($rst !== false) {
-        while (($r = mysql_fetch_array($rst)) !== false) {
+    if ($rst !== FALSE) {
+        while (($r = mysql_fetch_array($rst)) !== FALSE) {
             if ($r['Variable_name'] == 'version') {
                 return $r['Value'];
             }
@@ -77,16 +77,16 @@ function dbman_getDBVersion() {
 */
 function dbman_getTableDef($table_name) {
     $rst = mysql_query("SHOW CREATE TABLE {$table_name}");
-    if ($rst !== false) {
+    if ($rst !== FALSE) {
         $r = mysql_fetch_array($rst);
-        if ($r !== false) {
+        if ($r !== FALSE) {
             $retval = rtrim($r['Create Table']);
             $retval = str_replace(array("\r\n", "\r"), LB, $retval);
             return $retval . ';';
         }
     }
     
-    return false;
+    return FALSE;
 }
 
 /**
@@ -119,7 +119,7 @@ function dbman_extractTableDefFromBackup($table_name, $filename) {
         }
     }
     
-    return false;
+    return FALSE;
 }
 
 /**
@@ -133,8 +133,8 @@ function dbman_getTableList() {
     $sql = 'SHOW TABLES LIKE "'
          . addslashes(str_replace('_', '\\_', $_DB_table_prefix)) . '%"';
     $rst = mysql_query($sql);
-    if ($rst !== false) {
-        while (($r = mysql_fetch_array($rst, MYSQL_NUM)) !== false) {
+    if ($rst !== FALSE) {
+        while (($r = mysql_fetch_array($rst, MYSQL_NUM)) !== FALSE) {
             $table_name = $r[0];
             $retval[$table_name]['name'] = $table_name;
         }
@@ -167,7 +167,7 @@ function dbman_quoteString($item) {
 * Checks if the designated table has any BLOB field
 *
 * @param  $table_name (string) the table name to check for
-* @return (boolean) true = has a BLOB field, false = none
+* @return (boolean) TRUE = has a BLOB field, FALSE = none
 */
 function dbman_isHasBLOBField($table_name) {
     global $dbman_blob_types;
@@ -179,12 +179,12 @@ function dbman_isHasBLOBField($table_name) {
             $column_name = $match[1];
             $column_def  = strtoupper(trim($match[2]));
             if (in_array($column_def, $dbman_blob_types)) {
-                return true;
+                return TRUE;
             }
         }
     }
     
-    return false;
+    return FALSE;
 }
 
 /**
@@ -197,7 +197,7 @@ function dbman_getTableNameFromBackup($filename) {
     
     if (substr($filename, -3) == '.gz') {
         $fh = gzopen($filename, 'r');
-        if ($fh === false) {
+        if ($fh === FALSE) {
             return $retval;
         } else {
             $f = '';

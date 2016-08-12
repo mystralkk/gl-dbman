@@ -6,7 +6,7 @@
 // +---------------------------------------------------------------------------+
 // | public_html/admin/plugins/dbman/install.php                               |
 // +---------------------------------------------------------------------------+
-// | Copyright (C) 2008 mystral-kk - geeklog AT mystral-kk DOT net             |
+// | Copyright (C) 2008-2010 mystral-kk - geeklog AT mystral-kk DOT net        |
 // |                                                                           |
 // | Constructed with the Universal Plugin                                     |
 // | Copyright (C) 2002 by the following authors:                              |
@@ -76,7 +76,7 @@ if (!SEC_inGroup('Root')) {
 
 /**
 * Install Dbman Plugin
-* @return	boolean	True if successful False otherwise
+* @return	boolean	TRUE if successful False otherwise
 */
 function plugin_install_dbman() {
     global $_CONF, $_TABLES, $NEW_FEATURES, $pi_name, $pi_display_name,
@@ -179,7 +179,7 @@ function plugin_install_dbman() {
     * Finish
     */
     COM_errorLog("Succesfully installed the $pi_display_name Plugin!", 1);
-    return true;
+    return TRUE;
 }
 
 /**

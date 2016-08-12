@@ -2,7 +2,7 @@
 Geeklog Dbman (データベース管理) プラグイン
 インストール/アンインストールマニュアル
 
-Copyright (C) 2006-2008 mystral-kk - geeklog AT mystral-kk DOT net
+Copyright (C) 2006-2010 mystral-kk - geeklog AT mystral-kk DOT net
                                      http://mystral-kk.net/
 ======================================================================
 
@@ -72,6 +72,9 @@ $_DBMAN_CONF['backup_except']を編集してください。
 
 改訂履歴
 --------
+
+ver 0.5.4 2010-07-04  'TIMESTAMP'フィールドが文字列として処理されていなかったバ
+                      グを修正しました。
 
 ver 0.5.3 2009-11-04  英語・日本語以外の言語を選択した場合に文字化けが起こるバグ
                       を修正しました。
