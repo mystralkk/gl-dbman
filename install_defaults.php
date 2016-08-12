@@ -5,7 +5,7 @@
 // +---------------------------------------------------------------------------+
 // | geeklog/plugins/dbman/install_defaults.php                                |
 // +---------------------------------------------------------------------------+
-// | Copyright (C) 2011 mystral-kk - geeklog AT mystral-kk DOT net             |
+// | Copyright (C) 2011-2012 mystral-kk - geeklog AT mystral-kk DOT net        |
 // |                                                                           |
 // | Constructed with the Universal Plugin                                     |
 // +---------------------------------------------------------------------------+
@@ -26,8 +26,8 @@
 // |                                                                           |
 // +---------------------------------------------------------------------------+
 
-if (strpos(strtolower($_SERVER['PHP_SELF']), strtolower(basename(__FILE__))) !== FALSE) {
-    die('This file can not be used on its own!');
+if (stripos($_SERVER['PHP_SELF'], basename(__FILE__)) !== FALSE) {
+    die('This file cannot be used on its own!');
 }
 
 /**
@@ -46,66 +46,48 @@ $_DBMAN_DEFAULT = array();
 // Main settings
 //===============================================
 
-/**
-* the flag to decide whether to allow restoration in Dbman plugin.
-* SHOULD BE FALSE TO PREVENT ACCIDENTAL DAMAGE TO DATABASE.  SET THIS OPTION TO
-* TRUE ONLY IF YOU KNOW WHAT YOU DO.  YOU HAVE BEEN WARNED!
-*/
+// The flag to decide whether to allow restoration in Dbman plugin.  SHOULD BE
+// FALSE TO PREVENT ACCIDENTAL DAMAGE TO DATABASE.  SET THIS OPTION TO TRUE
+// ONLY IF YOU KNOW WHAT YOU DO.  YOU HAVE BEEN WARNED!
 $_DBMAN_DEFAULT['allow_restore'] = FALSE;
 
-/**
-* the number of records to select data from database when the dbman plugin
-* backups a table.  If "MySQL client run out of memory." error occurs,
-* decrease this value
-*/
+// The number of records to select data from database when the dbman plugin
+// backups a table.  If "MySQL client run out of memory." error occurs, decrease
+// this value
 $_DBMAN_DEFAULT['chunk_size'] = 100;
 
-/**
-* the flag to indicate compression level:
-* valid values: 1 (largest size) - 9 (smallest size)
-*/
+// The flag to indicate compression level:
+// valid values: 1 (largest size) - 9 (smallest size)
 $_DBMAN_DEFAULT['compression_level'] = 8;
 
-/**
-* table names which the Dbman plugin shouldn't backup the data of (table
-* structures will always be backupped).  You can use regular expressions
-* (preg_match() style) to designate table name(s).
-* e.g. "/^{$_DB_table_prefix}sessions_/"
-*/
+// Table names which the Dbman plugin shouldn't backup the data of (table
+// structures will always be backupped).  You can use regular expressions
+// (preg_match() style) to designate table name(s).
+// e.g. "/^{$_DB_table_prefix}sessions_/"
 $_DBMAN_DEFAULT['backup_except']   = array();
 $_DBMAN_DEFAULT['backup_except'][] = "/^{$_DB_table_prefix}gus_/";
 
-/**
-* the flag to decide whether to backup with psedo-cron
-*/
+// The flag to decide whether to backup with psedo-cron
 $_DBMAN_DEFAULT['cron_backup'] = FALSE;
 
-/**
-* Maximum number of backup files to be kept.  When set to 0, no backup file
-* will be deleted.
-*/
+// Maximum number of backup files to be kept.  When set to 0, no backup file
+// will be deleted.
 $_DBMAN_DEFAULT['max_backup'] = 0;
 
 //===============================================
 // Default settings for backup
 //===============================================
 
-/**
-* the flag to decide whether to add "DROP TABLE IF EXISTS ...".
-* For the compatibility with PhpMyAdminin, this should be set false.
-*/
+// The flag to decide whether to add "DROP TABLE IF EXISTS ...".  For the
+// compatibility with PhpMyAdminin, this should be set false.
 $_DBMAN_DEFAULT['add_drop_table'] = FALSE;
 
-/**
-* the flag to decide whether to compress backup files.  If set true, the
-* dbman plugin tries to compress the data with Zlib.  In this case,
-* names of backup files are '*.sql.gz'.
-*/
+// The flag to decide whether to compress backup files.  If set true, the dbman
+// plugin tries to compress the data with Zlib.  In this case, names of backup
+// files are '*.sql.gz'.
 $_DBMAN_DEFAULT['compress_data'] = FALSE;
 
-/**
-* the flag to decide whether to download backup files.
-*/
+// The flag to decide whether to download backup files.
 $_DBMAN_DEFAULT['download_as_file'] = FALSE;
 
 /**

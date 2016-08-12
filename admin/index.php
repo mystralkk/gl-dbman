@@ -1,12 +1,11 @@
 <?php
 
-// Reminder: always indent with 4 spaces (no tabs).
 // +---------------------------------------------------------------------------+
 // | Geeklog Dbman Plugin for Geeklog - The Ultimate Weblog                    |
 // +---------------------------------------------------------------------------+
 // | public_html/admin/plugins/dbman/index.php                                 |
 // +---------------------------------------------------------------------------+
-// | Copyright (C) 2008-2011 mystral-kk - geeklog AT mystral-kk DOT net        |
+// | Copyright (C) 2008-2012 mystral-kk - geeklog AT mystral-kk DOT net        |
 // |                                                                           |
 // | Constructed with the Universal Plugin                                     |
 // | Copyright (C) 2002 by the following authors:                              |
@@ -32,11 +31,14 @@
 /**
 * Dbman plugin admin index file based on Geeklog 'databse.php' file
 */
-
 global $_CONF, $_USER;
 
-require_once('../../../lib-common.php');
-require_once($_CONF['path'] . '/plugins/dbman/config.php');
+require_once '../../../lib-common.php';
+
+if (!in_array('dbman', $_PLUGINS)) {
+	echo COM_refresh($_CONF['site_url']);
+	exit;
+}
 
 if (!defined('XHTML')) {
 	define('XHTML', '');
@@ -44,9 +46,7 @@ if (!defined('XHTML')) {
 
 $display = '';
 
-/**
-* Check if user has rights to access this page
-*/
+// Checks if user has rights to access this page
 if (!SEC_hasRights('dbman.edit')) {
 	// Someone is trying to illegally access this page
 	COM_errorLog("Someone has tried to illegally access the Dbman page.  User id: {$_USER['uid']}, Username: {$_USER['username']}, IP: {$_SERVER['REMOTE_ADDR']}", 1);
@@ -63,16 +63,12 @@ if (!SEC_hasRights('dbman.edit')) {
 // 		Main function
 // ==================================================================
 
-/**
-* the three values set below are meaningful only the first time this file is called
-*/
+// The three values set below are meaningful only the first time this file is called
 $add_drop_table   = $_DBMAN_CONF['add_drop_table'];
 $compress_data    = $_DBMAN_CONF['compress_data'];
 $download_as_file = $_DBMAN_CONF['download_as_file'];
 
-/**
-* decides whether to list or backup or restore
-*/
+// Decides whether to list or backup or restore
 $cmd = 'list';
 
 if (isset($_GET['cmd'])) {
