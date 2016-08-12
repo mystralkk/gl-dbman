@@ -2,7 +2,7 @@
 
 // Reminder: always indent with 4 spaces (no tabs). 
 // +---------------------------------------------------------------------------+
-// | Geeklog Dbman Plugin 0.3 for Geeklog - The Ultimate Weblog                |
+// | Geeklog Dbman Plugin for Geeklog - The Ultimate Weblog                    |
 // +---------------------------------------------------------------------------+
 // | install.php   Dbman plugin installation file                              |
 // +---------------------------------------------------------------------------+
@@ -33,14 +33,14 @@ require_once($_CONF['path'] . 'plugins/dbman/config.php');
 require_once($_CONF['path'] . 'plugins/dbman/functions.inc');
 
 $_FORM = array_merge($_GET, $_POST);
-$action = $_FORM['action'];
+$action = COM_applyFilter($_FORM['action']);
 
 // Dbman plugin install variables
 
-$pi_name         = 'dbman';											// Plugin name
-$pi_display_name = 'dbman';											// Plugin display name
+$pi_name         = 'dbman';							// Plugin name
+$pi_display_name = 'dbman';							// Plugin display name
 $pi_version      = $_DBMAN_CONF['version'];			// Plugin Version
-$gl_version      = '1.4.0';													// GL Version plugin for
+$gl_version      = '1.4.0';							// GL Version plugin for
 $pi_url          = 'http://www.ddlinks.net/blog/';	// Plugin Homepage
 
 // Security Feature to add
@@ -168,9 +168,9 @@ if ($action == 'install') {
 	}
 } else if ($action == "uninstall") {
 	if (plugin_uninstall_dbman()) {
-  	$T->set_var('installmsg1', $LANG_DBMAN['uninstall_msg']);
+	  	$T->set_var('installmsg1', $LANG_DBMAN['uninstall_msg']);
 	} else {
-  	$T->set_var('installmsg1', $LANG_DBMAN['uninstall_failed']);
+  		$T->set_var('installmsg1', $LANG_DBMAN['uninstall_failed']);
 	}
 }
 

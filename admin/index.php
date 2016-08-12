@@ -2,7 +2,7 @@
 
 // Reminder: always indent with 4 spaces (no tabs). 
 // +---------------------------------------------------------------------------+
-// | Geeklog Dbman Plugin 0.3.1 for Geeklog - The Ultimate Weblog              |
+// | Geeklog Dbman Plugin for Geeklog - The Ultimate Weblog                    |
 // +---------------------------------------------------------------------------+
 // | index.php   Dbman plugin admin index file                                 |
 // +---------------------------------------------------------------------------+
@@ -96,7 +96,7 @@ if (isset($_GET['cmd'])) {
 }
 
 $is_submit = isset($_POST['submit']);
-$display   = COM_siteHeader();;
+$display   = COM_siteHeader();
 
 switch (strtolower($cmd)) {
 case 'backup':

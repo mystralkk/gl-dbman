@@ -58,7 +58,7 @@ $LANG_DBMAN = array(
 	'db_explanation_backup' => 'To backup Database, click \'Backup now!\'.',
 	'db_explanation_list' => 'Click \'Backup DB\' or \'Restore DB\'',
 	'db_explanation_restore' => 'To restore Database, check a backup file and then click \'Next &gt;$gt;>\'.',
-	'db_explanation_restore_option' => 'Select options for %s.',  /* %s = backup file */
+	'db_explanation_restore_option' => 'Select options for %s.  If you check <strong>TABLE STRUCTURES</strong>, the checked tables structures will be re-created (existing data will be deleted).  If you check <strong>DATA</strong>, the checked data will be restored without deleting the existing data.  In case there is a duplicate record, the existing record will be overwritten.<br><strong>WARNING: The restoration feature is a simple and crude one under development.  Dbman plugin doesn\'t care which table you will restore or which record will be overwritten.  In case you restore data into tables being used by the Geeeklog system or the size of records to be restored is too big, the restoration process may fail and result in broken tables.</strong>',  /* %s = backup file */
 	'download_as_file' => 'Download as a file',
 	'enabled' => 'Disable plugin before uninstalling.',
 	'install' => 'Install',
@@ -85,8 +85,8 @@ $LANG_DBMAN = array(
 	'restore_now' => 'Restore now!',
 	'restore_success' => 'Restoration completed successfully.',
 	'restore_header1' => 'table name',
-	'restore_header2' => 'table structure',
-	'restore_header3' => 'table data',
+	'restore_header2' => 'TABLE STRUCTURE',
+	'restore_header3' => 'TABLE DATA',
 	'size' => 'Size',
 	'uncheck_all' => 'UnCheck all',
 	'uninstall' => 'UnInstall',

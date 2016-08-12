@@ -46,7 +46,8 @@ That's it.
 
 #####  REVISION HISTORY #####
 
+ver 0.4   2006/05/04 Implemented a feature of restoring data from backup file.
 ver 0.3.1 2006/04/28 Modified to save NULL values correctly.
-ver 0.3              Initial version
+ver 0.3              Initial version.
 
 ##### /REVISION HISTORY #####

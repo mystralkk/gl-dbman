@@ -2,7 +2,7 @@
 
 // Reminder: always indent with 4 spaces (no tabs). 
 // +---------------------------------------------------------------------------+
-// | Geeklog Dbman Plugin 0.3 for Geeklog - The Ultimate Weblog                |
+// | Geeklog Dbman Plugin for Geeklog - The Ultimate Weblog                    |
 // +---------------------------------------------------------------------------+
 // | dbman-mysql.inc   Dbman plugin DB-specific functions file for MySQL       |
 // +---------------------------------------------------------------------------+
@@ -25,7 +25,7 @@
 //
 // $Id$
 /* 
- * Dbman plugin DB-specific  functions file for MySQL
+ * Dbman plugin DB-specific functions file for MySQL
  */
 
 //  Data types to be quoted with dbman_quoteString()
@@ -43,67 +43,95 @@ $dbman_blob_types = array(
 
 //  Returns DB server version
 
-	function dbman_getDBVersion() {
-		$rst = mysql_query("SHOW VARIABLES;");
-		if ($rst !== false) {
-			while (($r = mysql_fetch_array($rst)) !== false) {
-				if ($r['Variable_name'] == 'version') {
-					return $r['Value'];
-					exit;
-				}
-			}
-		}
-		
-		return 'unavailable';
-	}
-
-//  Returns table definition
-
-	function dbman_getTableDef($table_name) {
-		$rst = mysql_query("SHOW CREATE TABLE {$table_name};");
-		if ($rst !== false) {
-			$r = mysql_fetch_array($rst);
-			if ($r !== false) {
-				$retval = rtrim($r['Create Table']);
-				$retval = str_replace(array("\r\n", "\r"), "\n", $retval);
-				return $retval . ";";
+function dbman_getDBVersion() {
+	$rst = mysql_query("SHOW VARIABLES;");
+	if ($rst !== false) {
+		while (($r = mysql_fetch_array($rst)) !== false) {
+			if ($r['Variable_name'] == 'version') {
+				return $r['Value'];
 				exit;
 			}
 		}
-		return NULL;
 	}
+	
+	return 'unavailable';
+}
 
-//  Returns a list of tables
+//  Returns table definition used in the current database
 
-	function dbman_getTableList() {
-		global $_DB_name;
-		
-		$retval = array();
-		$rst = mysql_query("SHOW TABLES;");
-		if ($rst !== false) {
-			while (($r = mysql_fetch_array($rst)) !== false) {
-				$table_name = $r['Tables_in_' . $_DB_name];
-				$retval[$table_name]['name'] = $table_name;
-			}
+function dbman_getTableDef($table_name) {
+	$rst = mysql_query("SHOW CREATE TABLE {$table_name};");
+	if ($rst !== false) {
+		$r = mysql_fetch_array($rst);
+		if ($r !== false) {
+			$retval = rtrim($r['Create Table']);
+			$retval = str_replace(array("\r\n", "\n\r", "\r"), "\n", $retval);
+			return $retval . ";";
+			exit;
 		}
-		return $retval;
 	}
+	return NULL;
+}
+
+//  Returns table definition extracted from backup file
+
+function dbman_extractTableDefFromBackup($table_name, $filename) {
+	
+	$retval = array();
+	$table_name = dbman_quoteItem($table_name);
+	$data = file_get_contents($filename);
+	$data = str_replace(array("\r\n", "\r"), "\n", trim($data));
+	$data = explode("\n", $data);
+	for ($i = 0; $i < count($data); $i ++) {
+		if (eregi("^[ \t]*CREATE[ \t]+TABLE[ \t]+" . $table_name, $data[$i], $dummy) > 11) {
+			$retval[] = $data[$i];
+			$lbrc = substr_count($data[$i], '(');
+			$rbrc = substr_count($data[$i], ')');
+			while ($lbrc != $rbrc) {
+				$i ++;
+				$retval[] = $data[$i];
+				$lbrc += substr_count($data[$i], '(');
+				$rbrc += substr_count($data[$i], ')');
+			}
+			return implode("\n", $retval);
+			exit;
+		}
+	}
+
+	return NULL;
+}
+
+//  Returns an array of table names
+
+function dbman_getTableList() {
+	global $_DB_name;
+		
+	$retval = array();
+	$rst = mysql_query("SHOW TABLES;");
+	if ($rst !== false) {
+		while (($r = mysql_fetch_array($rst)) !== false) {
+			$table_name = $r['Tables_in_' . $_DB_name];
+			$retval[$table_name]['name'] = $table_name;
+		}
+	}
+	return $retval;
+}
 	
 //  Returns quoted name of database, table and column
 
-	function dbman_quoteItem($item) {
-		return '`' . $item . '`';
-	}
+function dbman_quoteItem($item) {
+	return '`' . $item . '`';
+}
 
 //  Returns quoted string.
 
-	function dbman_quoteString($item) {
-		$item = str_replace(array("\r\n", "\r", "\n"), '\\r\\n', $item);
-		if (! get_magic_quotes_gpc()) {
-			$item = addslashes($item);
-		}
-		return "'" . $item . "'";
+function dbman_quoteString($item) {
+	$item = str_replace(array("\r\n", "\n\r", "\r", "\n"), '\\r\\n', $item);
+	if (! get_magic_quotes_gpc()) {
+		$item = addslashes($item);
 	}
+	return "'" . $item . "'";
+}
 
 //  Checks if the designated table has any BLOB field
 //  @parameters:
@@ -111,54 +139,54 @@ $dbman_blob_types = array(
 //
 //  @return (boolean) true = has a BLOB field, false = none
 
-	function dbman_isHasBLOBField($table_name) {
-		global $dbman_blob_types;
-		
-		$defs = explode("\n", dbman_getTableDef($table_name));
-		foreach ($defs as $def) {
-			if (eregi('^[ ]*`(.*)`[ ]+([a-zA-Z0-9_]*).*$', $def, $match) > 0) {
-				$column_name = $match[1];
-				$column_def  = strtoupper(trim($match[2]));
-				if (in_array($column_def, $dbman_blob_types)) {
-					return true;
-				}
+function dbman_isHasBLOBField($table_name) {
+	global $dbman_blob_types;
+	
+	$defs = explode("\n", dbman_getTableDef($table_name));
+	foreach ($defs as $def) {
+		if (eregi('^[ ]*`(.*)`[ ]+([a-zA-Z0-9_]*).*$', $def, $match) > 0) {
+			$column_name = $match[1];
+			$column_def  = strtoupper(trim($match[2]));
+			if (in_array($column_def, $dbman_blob_types)) {
+				return true;
 			}
 		}
-		
-		return false;
 	}
+	
+	return false;
+}
 
 // Returns tables name included in the {$filename} file
 // backquote char '`' may be mysql-specific
 
-	function dbman_getTableNameFromBackup($filename) {
-	
-		$retval = array();
-	
-		if (substr($filename, -3) == '.gz') {
-			$fh = gzopen($filename, "r");
-			if ($fh === false) {
-				return $retval;
-			} else {
-				$f = '';
-				while (! gzeof($fh)) {
-					$f .= gzread($fh, 10000);
-				}
-				gzclose($fh);
-			}
+function dbman_getTableNameFromBackup($filename) {
+
+	$retval = array();
+
+	if (substr($filename, -3) == '.gz') {
+		$fh = gzopen($filename, "r");
+		if ($fh === false) {
+			return $retval;
 		} else {
-			$f = file_get_contents($filename);
-		}
-		$f = str_replace(array("\r\n", "\r"), "\n", $f);
-		$f = explode("\n", trim($f));
-		
-		foreach ($f as $line) {
-			if (eregi("CREATE[ ]+TABLE[ ]+`(.*)`[ ]*\(", $line, $match) > 0) {
-				$retval[] = $match[1];
+			$f = '';
+			while (! gzeof($fh)) {
+				$f .= gzread($fh, 10000);
 			}
+			gzclose($fh);
 		}
-		
-		return $retval;
+	} else {
+		$f = file_get_contents($filename);
 	}
+	$f = str_replace(array("\r\n", "\r"), "\n", $f);
+	$f = explode("\n", trim($f));
+	
+	foreach ($f as $line) {
+		if (eregi("CREATE[ ]+TABLE[ ]+`(.*)`[ ]*\(", $line, $match) > 0) {
+			$retval[] = $match[1];
+		}
+	}
+	
+	return $retval;
+}
 
 ?>

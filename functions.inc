@@ -2,7 +2,7 @@
 
 // Reminder: always indent with 4 spaces (no tabs). 
 // +---------------------------------------------------------------------------+
-// | Geeklog Dbman Plugin 0.3.1 for Geeklog - The Ultimate Weblog              |
+// | Geeklog Dbman Plugin for Geeklog - The Ultimate Weblog                    |
 // +---------------------------------------------------------------------------+
 // | functions.inc   Dbman plugin general functions file                       |
 // +---------------------------------------------------------------------------+
@@ -11,7 +11,6 @@
 // | This program is licensed under the terms of the GNU General Public License|
 // | as published by the Free Software Foundation; either version 2            |
 // | of the License, or (at your option) any later version.                    |
-// |                                                                           |
 // |                                                                           |
 // | This program is distributed in the hope that it will be useful,           |
 // | but WITHOUT ANY WARRANTY; without even the implied warranty of            |
@@ -32,9 +31,9 @@
 
 	$langfile = $_CONF['path'] . 'plugins/dbman/language/' . $_CONF['language'] . '.php';
 	if (file_exists ($langfile)) {
-    include_once ($langfile);
+	    include_once ($langfile);
 	} else {
-    include_once ($_CONF['path'] . 'plugins/dbman/language/english.php');
+    	include_once ($_CONF['path'] . 'plugins/dbman/language/english.php');
 	}
 	
 	require_once ($_CONF['path'] . 'plugins/dbman/config.php');
@@ -51,21 +50,20 @@
 	$baseurl = $_CONF['site_admin_url'] . '/plugins/dbman';
 	$dbman_menu = array(
 		'admin' => array(
-					'url' => $_CONF['site_admin_url'],
+					'url'  => $_CONF['site_admin_url'],
 					'text' => $LANG_ADMIN['admin_home']
 		),
 		'backup' => array(
-					'url' => $baseurl . '/index.php?cmd=backup_option',
+					'url'  => $baseurl . '/index.php?cmd=backup_option',
 					'text' => $LANG_DBMAN['menu_backup']
 		),
 		'list' => array(
-					'url' => $baseurl . '/index.php',
+					'url'  => $baseurl . '/index.php',
 					'text' => $LANG_DBMAN['menu_list']
 		)
 	);
-/*  This functions is under development
-	$dbman_menu['restore'] = array(
-					'url' => $baseurl . '/index.php?cmd=restore_select',
+/*	$dbman_menu['restore'] = array(
+					'url'  => $baseurl . '/index.php?cmd=restore_select',
 					'text' => $LANG_DBMAN['menu_restore']
 	);
 */
@@ -85,21 +83,20 @@
  */
 
 /*
-function plugin_getmenuitems_dbman()
-{
+function plugin_getmenuitems_dbman() {
     global $_CONF, $_DBMAN_CNF, $LANG_DBMAN, $baseurl;
 
     $menulabel = 'Dbman';
     $menuurl   = $baseurl . '/index.php';
 
     $menuitems = array();
-		if (SEC_hasRights('dbman.edit')) {
+	if (SEC_hasRights('dbman.edit')) {
     	$menuitems["$menulabel"] = $menuurl;
-			return $menuitems;
-		} else {
-			return false;
-		}
+		return $menuitems;
+	} else {
+		return false;
 	}
+}
 */
 
 /*
@@ -111,11 +108,10 @@ function plugin_getmenuitems_dbman()
  * does comments.
  */
 
-	function plugin_commentsupport_dbman()
-	{
-		// dbman will not use comments
-		return false;
-	}
+function plugin_commentsupport_dbman() {
+	// dbman will not use comments
+	return false;
+}
 
 /*
  * This will put an option for the plugin in the command and control block on
@@ -127,12 +123,11 @@ function plugin_getmenuitems_dbman()
  *
  */
 
-	function plugin_cclabel_dbman() 
-	{
-		global $_CONF, $baseurl;
+function plugin_cclabel_dbman() {
+	global $_CONF, $baseurl;
 
-		return array('dbman', $baseurl . '/index.php', $baseurl . '/images/dbman.png');
-	}
+	return array('dbman', $baseurl . '/index.php', $baseurl . '/images/dbman.png');
+}
 
 /*
  * Returns the administrative option for this plugin
@@ -146,14 +141,13 @@ function plugin_getmenuitems_dbman()
  *
  */
  
-	function plugin_getadminoption_dbman() 
-	{
-		global $_CONF, $baseurl;
+function plugin_getadminoption_dbman() {
+	global $_CONF, $baseurl;
 
-		if (SEC_hasRights('dbman.edit')) {
-			return array('DBMan', $baseurl . '/index.php', '');
-    }
+	if (SEC_hasRights('dbman.edit')) {
+		return array('DBMan', $baseurl . '/index.php', '');
 	}
+}
 
 /*
  * Removes the datastructures for this plugin from the Geeklog database.
@@ -174,8 +168,7 @@ function plugin_getmenuitems_dbman()
  * @return   boolean True if successful false otherwise
  */  
 
-function plugin_uninstall_dbman($installCheck = '')
-	{
+function plugin_uninstall_dbman($installCheck = '') {
     global $_TABLES, $LANG_DBMAN;
 
     $pi_name  = 'dbman';
@@ -200,24 +193,24 @@ function plugin_uninstall_dbman($installCheck = '')
     
     // Remove all the associated features -- access rights
     foreach ($NEW_FEATURES as $feature) {
-			COM_errorLog("Removing '$feature' feature and rights to it", 1);
-			$feat_id = DB_getItem($_TABLES['features'], 'ft_id', "ft_name = '$feature'");
-			DB_query("DELETE FROM {$_TABLES['access']} WHERE acc_ft_id = $feat_id",1);
-			DB_query("DELETE FROM {$_TABLES['features']} WHERE ft_id = $feat_id",1);
+		COM_errorLog("Removing '$feature' feature and rights to it", 1);
+		$feat_id = DB_getItem($_TABLES['features'], 'ft_id', "ft_name = '$feature'");
+		DB_query("DELETE FROM {$_TABLES['access']} WHERE acc_ft_id = $feat_id",1);
+		DB_query("DELETE FROM {$_TABLES['features']} WHERE ft_id = $feat_id",1);
     }
 		
-		// Get group_id, if any
-		$rst = DB_query("SELECT value FROM {$_TABLES['vars']} WHERE name = '{$pi_name}_gid'", 1);
-		if ($rst !== false) {
-			$ar = DB_fetcharray($rst);
-			$group_id = $ar[0];
-			DB_query("DELETE FROM {$_TABLES['vars']} WHERE name = '{$pi_name}_gid'", 1);
-			DB_query("DELETE FROM {$_TABLES['group_assignments']} WHERE (ug_main_grp_id = $group_id) AND (ug_grp_id = 1)", 1);
-			DB_query("DELETE FROM {$_TABLES['groups']} WHERE grp_id = $group_id", 1);
-		}
+	// Get group_id, if any
+	$rst = DB_query("SELECT value FROM {$_TABLES['vars']} WHERE name = '{$pi_name}_gid'", 1);
+	if ($rst !== false) {
+		$ar = DB_fetcharray($rst);
+		$group_id = $ar[0];
+		DB_query("DELETE FROM {$_TABLES['vars']} WHERE name = '{$pi_name}_gid'", 1);
+		DB_query("DELETE FROM {$_TABLES['group_assignments']} WHERE (ug_main_grp_id = $group_id) AND (ug_grp_id = 1)", 1);
+		DB_query("DELETE FROM {$_TABLES['groups']} WHERE grp_id = $group_id", 1);
+	}
     COM_errorLog('Succesfully uninstalled the Dbman Plugin!', 1);
     return true;
-	}
+}
 
 /*
  * Returns the version for this plugin
@@ -225,12 +218,11 @@ function plugin_uninstall_dbman($installCheck = '')
  * @return string VersionNo
  */
 
-	function plugin_chkVersion_dbman()
-	{
-		global $_DBMAN_CNF;
-		
-		return $_DBMAN_CNF['version'];
-	}
+function plugin_chkVersion_dbman() {
+	global $_DBMAN_CNF;
+	
+	return $_DBMAN_CNF['version'];
+}
 
 /*
  *  Helper Functions
@@ -309,9 +301,9 @@ function DBMAN_backupOptions($add_drop_table, $backup_blob, $compress_data,
 	}
 	$retval = '<form action="./index.php" method="post">';
 	$menu_arr = array (
-			$dbman_menu['admin'],
-			$dbman_menu['list'],
-			$dbman_menu['restore']
+		$dbman_menu['admin'],
+		$dbman_menu['list'],
+		$dbman_menu['restore']
 	);
 
 	$header_arr = array(      # dislay 'text' and use table field 'option'
@@ -325,14 +317,13 @@ function DBMAN_backupOptions($add_drop_table, $backup_blob, $compress_data,
 
 	$data_arr = array();
 	$data_arr[] = array(
-			'option' => "<input name=\"add_drop_table\" type=\"checkbox\" {$str_add_drop_table}>"
+		'option' => "<input name=\"add_drop_table\" type=\"checkbox\" {$str_add_drop_table}>"
 				. "{$LANG_DBMAN['add_drop_table']}"
 	);
 	
 	if ($has_blob) {
 		$data_arr[] = array(
-			'option' => "<input name=\"backup_blob\" type=\"checkbox\" {$str_backup_blob}>"
-				. "{$LANG_DBMAN['backup_blob']}"
+			'option' => "<input name=\"backup_blob\" type=\"checkbox\" {$str_backup_blob}>" . "{$LANG_DBMAN['backup_blob']}"
 		);
 	}
 	
@@ -344,7 +335,7 @@ function DBMAN_backupOptions($add_drop_table, $backup_blob, $compress_data,
 	}
 	
 	$data_arr[] = array(
-			'option' => "<input name=\"download_as_file\" type=\"checkbox\" {$str_download_as_file}>" . "{$LANG_DBMAN['download_as_file']}"
+		'option' => "<input name=\"download_as_file\" type=\"checkbox\" {$str_download_as_file}>" . "{$LANG_DBMAN['download_as_file']}"
 	);
 	
 	$text_arr = array(
@@ -374,9 +365,9 @@ function DBMAN_restoreSelectFile() {
 	
 	$retval = '<form action="./index.php" method="post">';
 	$menu_arr = array (
-			$dbman_menu['admin'],
-			$dbman_menu['list'],
-			$dbman_menu['backup']
+		$dbman_menu['admin'],
+		$dbman_menu['list'],
+		$dbman_menu['backup']
 	);
 
 	$header_arr = array(      # dislay 'text' and use table field 'file' & 'size'
@@ -420,19 +411,19 @@ function DBMAN_restoreOption($filename, $restore_blob = false) {
 	
 	$retval = '<form action="./index.php" method="post">';
 	$menu_arr = array (
-			$dbman_menu['admin'],
-			$dbman_menu['list'],
-			$dbman_menu['backup']
+		$dbman_menu['admin'],
+		$dbman_menu['list'],
+		$dbman_menu['backup']
 	);
 
 	$link_to_table = "<br><input type='button' value='" . $LANG_DBMAN["check_all"]
 	               . "' onClick='chTableOn()'><br>"
-								 . "<input type='button' value='" . $LANG_DBMAN["uncheck_all"]
-								 . "' onClick='chTableOff()'>";
+				   . "<input type='button' value='" . $LANG_DBMAN["uncheck_all"]
+				   . "' onClick='chTableOff()'>";
 	$link_to_data  = "<br><input type='button' value='" . $LANG_DBMAN["check_all"]
 	               . "' onClick='chDataOn()'><br>"
-								 . "<input type='button' value='" . $LANG_DBMAN["uncheck_all"]
-								 . "' onClick='chDataOff()'>";
+				   . "<input type='button' value='" . $LANG_DBMAN["uncheck_all"]
+				   . "' onClick='chDataOff()'>";
 	
 	$header_arr = array(      # dislay 'text' and use table field 'option'
 		array(
@@ -471,7 +462,7 @@ function DBMAN_restoreOption($filename, $restore_blob = false) {
 	$fname = pathinfo($filename);
 	$text_arr = array(
 		'has_menu' => true,
-		'instructions' => sprintf($LANG_DBMAN['db_explanation_restore_option'], $fname['basename']),
+		'instructions' => sprintf($LANG_DBMAN['db_explanation_restore_option'], "<b>{$fname['basename']}</b>"),
 		'icon' => $baseurl . '/images/dbman.png',
 		'title' => $LANG_DBMAN['menu_restore']
 	);
@@ -745,6 +736,7 @@ EOD1;
 					$isSuccess = isCreated($backupfile);
 					if ($isSuccess) {
 						COM_errorLog("Dbman: Backup completed successfully.", 1);
+						@chmod($backupfile, 0644);
 					} else {
 						COM_errorLog("Dbman: Couldn't write data into a backup-file.", 1);
 					}
@@ -780,7 +772,7 @@ EOD1;
  *   ('geeklog_db_backup_YYYY_MM_DD_hh:mm:ss.sql[.gz]') in the /backups directory.
  *
  * @parameters:
- *   $filename (string)         : the full path of a backup file
+ *   $filename (string)         : the full path to a backup file
  *   $structures_arr (array of string): an array of table names to restore their
  *                                structures
  *   $data_arr (array of string): an array of table names to restore their data
@@ -791,17 +783,80 @@ EOD1;
  *                                writes '(BLOB)' into the field
  *
  * @return (int) true = success, false = failure
+ *
+ * :TODO:  implement the feature of restoring BLOB fields
+ *
  */
 
 function DBMAN_restore($filename, $structures_arr, $data_arr, $restore_blob = false) {
 	
-	for ($i = 0; $i < count($structures_arr); $i ++) {
-		echo $structures_arr[$i] . "<br>";
+	$num_structure = count($structures_arr);
+	$num_data      = count($data_arr);
+	$num_structure_success = $num_data_success = 0;
+	COM_errorLog('Dbman: restoration started.');
+
+	// Recreate table structures
+	for ($i = 0; $i < $num_structure; $i ++) {
+		$table = $structures_arr[$i];
+		$drop_sql   = 'DROP TABLE ' . dbman_quoteItem($table) . ';';
+		echo $drop_sql . "<br>";
+		DB_query($drop_sql, 1);
+		if (DB_error()) {
+			$msg = "Dbman: couldn't drop table {$table}.";
+			COM_errorLog($msg);
+			echo $msg . '<br>';
+		}
+
+		$create_sql = dbman_extractTableDefFromBackup($table, $filename);
+		DB_query($create_sql, 1);
+		if (DB_error()) {
+			$msg = "Dbman: couldn't create table {$table}.";
+			COM_errorLog($msg);
+			echo $msg . '<br>';
+		} else {
+			$msg = "Dbman: re-created table {$table} successfully.";
+			COM_errorLog($msg);
+			echo $msg . '<br>';
+			$num_structure_success ++;
+		}
 	}
+	
 	echo "<hr>";
-	for ($i = 0; $i < count($data_arr); $i ++) {
-		echo $data_arr[$i] . "<br>";
+	
+	// Restore table contents
+	$data = file_get_contents($filename);
+	$data = str_replace(array("\r\n", "\r"), "\n", trim($data));
+	$data = explode("\n", $data);
+	for ($i = 0; $i < $num_data; $i ++) {
+		$table   = $data_arr[$i];
+//		$hasBlob = dbman_isHasBLOBField($table);
+		$msg = "Dbman: started restoring data into {$table}.";
+		COM_errorLog($msg);
+		echo $msg;
+		reset($data);
+		$num_error = 0;
+		for ($j = 0; $j < count($data); $j ++) {
+			if (eregi("^[ \t]*INSERT[ \t]+INTO[ \t]+" . dbman_quoteItem($table), $data[$j], $match) > 10) {
+				$d = $data[$j];
+				DB_query($d);
+				if (DB_error()) {
+					$msg = "Dbman: couldn't insert data into table {$table}.  SQL in question is $d.";
+					COM_errorLog($msg);
+					echo $msg . '<br>';
+				} else {
+					echo '.';
+				}
+			}
+		}
+		$msg = "Dbman: finished restoring data into table {$table}.";
+		COM_errorLog($msg);
+		echo '<br>' . $msg . '<br>';
+		if ($num_error == 0) {
+			$num_data_success ++;
+		}
 	}
+	COM_errorLog('Dbman: restoration completed.');
+	
 	exit;
 	return false;
 }

@@ -2,9 +2,9 @@
 
 // Reminder: always indent with 4 spaces (no tabs). 
 // +---------------------------------------------------------------------------+
-// | Geeklog Dbman Plugin 0.3 for Geeklog - The Ultimate Weblog                |
+// | Geeklog Dbman Plugin for Geeklog - The Ultimate Weblog                    |
 // +---------------------------------------------------------------------------+
-// | config.php   Yabackup plugin configuration file                           |
+// | config.php   Dbman plugin configuration file                              |
 // +---------------------------------------------------------------------------+
 // | Copyright (C) 2006  mystral_kk - mystral_kk AT ddlinks DOT net            |
 // +---------------------------------------------------------------------------+
@@ -30,7 +30,7 @@
  */
 
 /*
- * the Dbman plugin's config aray
+ * the Dbman plugin's config array
  * 
  * @global array $_DBMAN_CONF
  */
@@ -43,7 +43,7 @@ $_DBMAN_CONF = array();
  * @global array $_DBMAN_CONF['version']
  */
 
-$_DBMAN_CONF['version'] = '0.3.1';					// Plugin Version
+$_DBMAN_CONF['version'] = '0.4';					// Plugin Version
 
 /*
  * the flag to decide whether to add "DROP TABLE IF EXISTS ...".
@@ -68,7 +68,7 @@ $_DBMAN_CONF['backup_blob'] = false;
  * names of backup files are '*.sql.gz'.
  */
 
-$_DBMAN_CONF['compress_data'] = true;
+$_DBMAN_CONF['compress_data'] = false;
 
 /*
  * the flag to indicate compression level:
@@ -81,7 +81,7 @@ $_DBMAN_CONF['compression_level'] = 9;
  * the flag to decide whether to download backup files.
  */
 
-$_DBMAN_CONF['download_as_file'] = true;
+$_DBMAN_CONF['download_as_file'] = false;
 
 /*
  * the flag to decide whether to restore BLOB fields.
