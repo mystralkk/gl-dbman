@@ -1,0 +1,39 @@
+Install/Uninstall instruction for the Geeklog Yabackup plugin.
+
+BEFORE INSTALL:
+
+#####  CAUTION #####
+
+This plugin **DOESN'T** support FOREIGN KEY or BLOB field.
+
+##### /CAUTION #####
+
+INSTALL:
+
+Step 1:  Uncompress the Yabackup plugin archive while in the <geeklog_dir>/plugins directory.  The archive will
+create a directory called Yabackup in the plugins directory.
+
+Step 2:  Create the admin directory.  Under your admin/plugins/ directory create a directory called yabackup.
+
+Step 3:  Change to your <geeklog_dir>/plugins/Yabackup/ directory.  Copy the files in the admin directory 
+to the admin/plugins/Yabackup/ directory your created in step 2.
+
+Step 4:  Log in to your Geeklog as a root user and run install.php in your admin/plugins/yabackup/ directory.
+The install page will tell you if the install was successful or not.  If not examine Geeklog system errorlog
+for possible problems.
+
+The Yabackup plugin should now be installed and functioning.  Clicking on the Yabackup Icon will
+take you to the admin page.  
+
+Step 5: Set up security.  On install only the root users have access to Yabackup administration and Viewing.  
+You can delegate control for either of these functions through the user and group editors.
+
+UNINSTALL:
+
+Step 1:  Run the install.php page in your admin/plugins/yabackup directory.  This will remove
+ all the data concerned with Yabackup plugin from your database.
+
+Step 2:  Delete the two plugin directories created in the install process:  <geeklog-dir>plugins/Yabackup/ 
+and <admin>/plugins/Yabackup/
+
+That's it.

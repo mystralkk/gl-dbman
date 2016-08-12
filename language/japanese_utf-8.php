@@ -1,0 +1,90 @@
+<?php
+
+###############################################################################
+# japanese_utf-8.php
+# This is the japanese_utf-8 language page for the Geeklog Dbman Plug-in!
+#
+# Copyright (C) 2006 mystral_kk - mystral_kk AT ddlinks DOT net
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+#
+###############################################################################
+# $Id$
+
+/*
+ * This is the japanese_utf-8 language page for the Geeklog Dbman Plug-in! 
+ */
+
+###############################################################################
+# Array Format:
+# $LANGXX[YY]:	$LANG - variable name
+#		  	XX - file id number
+#			YY - phrase id number
+###############################################################################
+/*
+ * the Dbman plugin's lang array
+ * 
+ * @global array $LANG_DBMAN
+ */
+
+$LANG_DBMAN = array(
+	'access_denied' => 'アクセスは拒否されました。',
+	'access_denied_msg' => 'このプラグインの管理権限がないのに管理画面にアクセスしようとしました。この行為は記録されます。',
+	'add_drop_table' => '"DROP TABLE IF EXISTS"を追加する',
+	'admin'	=> 'プラグイン管理',
+	'backup_blob' => 'BLOBもバックアップする',
+	'backup_failure' => 'バックアップできませんでした。詳しくはエラーログをご覧ください。',
+	'backup_file' => 'バックアップされているファイル',
+	'backup_now' => 'バックアップ開始',
+	'backup_success' => 'バックアップしました。',
+	'bytes' => 'バイト',
+	'compress_data' => '圧縮する',
+	'couldnt_get_table_contents' => "(テーブルの内容を取得できませんでした。",
+	'couldnt_get_table_contents2' => 'を削除してから，やり直してください。)',
+	'couldnt_write_backup' => "データをバックアップファイルに書き込めませんでした。",
+	'db_explanation_backup' => 'データベースのバックアップを取るには「バックアップ作成」をクリックしてください。',
+	'db_explanation_list' => 'バックアップ/リストアを選択してください。',
+	'db_explanation_restore' => 'リストアするデータベースにチェックマークを入れから，「次へ」をクリックしてください。',
+	'download_as_file' => 'ファイルとしてダウンロードする',
+	'enabled' => 'アンインストールする前に，プラグインを無効にしてください。',
+	'install' => 'インストール',
+	'installdoc' => 'インストール文書',
+	'installed' => 'プラグインはインストールされています。',
+  'install_failed' => 'インストールに失敗しました。エラーログをご覧ください。',
+	'install_header' => 'プラグインのインストール/アンインストール',
+	'install_success'	=> 'インストールに成功しました。',
+	'last_ten_backups' => '最近のバックアップ(10世代分)',
+	'menu_backup' => 'バックアップ作成',
+	'menu_list' => 'ファイル一覧',
+	'menu_restore' => 'データベースのリストア',
+	'next' => '次へ	 &gt;&gt;',
+	'no_file_selected' => 'バックアップファイルが選択されていません。',
+	'not_writable' => 'Backups ディレクトリが書き込み不可になっています。',
+	'option' => '＜オプション＞',
+  'plugin' => 'Dbmanプラグイン',
+	'readme' => 'ちょっと待ってください。「インストール」をクリックする前に，お読みください：',
+	'restore_blob' => 'BLOBもリストアする',
+	'restore_failure' => 'リストアできませんでした。詳しくはエラーログをご覧ください。',
+	'restore_now' => 'リストア開始',
+	'restore_success' => 'リストアしました。',
+	'size' => 'サイズ',
+	'uninstall' => 'アンインストール',
+	'uninstalled' => 'プラグインはインストールされていません。',
+	'uninstall_msg'	=> 'アンインストールに成功しました。',
+	'warning'  => '警告！　プラグインが有効なままです',
+	'dbman' => 'Dbman'
+);
+
+?>

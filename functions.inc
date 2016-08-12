@@ -1,0 +1,680 @@
+<?php
+
+// Reminder: always indent with 4 spaces (no tabs). 
+// +---------------------------------------------------------------------------+
+// | Geeklog Dbman Plugin 0.3 for Geeklog - The Ultimate Weblog                |
+// +---------------------------------------------------------------------------+
+// | functions.inc   Dbman plugin general functions file                       |
+// +---------------------------------------------------------------------------+
+// | Copyright (C) 2006  mystral_kk - mystral_kk AT ddlinks DOT net            |
+// +---------------------------------------------------------------------------+
+// | This program is licensed under the terms of the GNU General Public License|
+// | as published by the Free Software Foundation; either version 2            |
+// | of the License, or (at your option) any later version.                    |
+// |                                                                           |
+// |                                                                           |
+// | This program is distributed in the hope that it will be useful,           |
+// | but WITHOUT ANY WARRANTY; without even the implied warranty of            |
+// | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.                      |
+// | See the GNU General Public License for more details.                      |
+// |                                                                           |
+// | You should have received a copy of the GNU General Public License         |
+// | along with this program; if not, write to the Free Software Foundation,   |
+// | Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.           |
+// +---------------------------------------------------------------------------+
+//
+// $Id$
+/* 
+ * Dbman plugin general functions file
+ */
+
+	global $_DB_dbms;				// needs to be declared while UnInstallation
+
+	$langfile = $_CONF['path'] . 'plugins/dbman/language/' . $_CONF['language'] . '.php';
+	if (file_exists ($langfile)) {
+    include_once ($langfile);
+	} else {
+    include_once ($_CONF['path'] . 'plugins/dbman/language/english.php');
+	}
+	
+	require_once ($_CONF['path'] . 'plugins/dbman/config.php');
+
+//	Include DB-specific functions
+
+	if (strcasecmp($_DB_dbms, 'mysql') == 0) {
+		include_once('sql/dbman-mysql.inc.php');
+	} else {
+		COM_errorLog("Database type '{$_DB_dbms}' is not supported in Dbman.", 1);
+		exit;
+	}
+
+	$baseurl = $_CONF['site_admin_url'] . '/plugins/dbman';
+	$dbman_menu = array(
+		'admin' => array(
+								'url' => $_CONF['site_admin_url'],
+								'text' => $LANG_ADMIN['admin_home']
+		),
+		'backup' => array(
+								'url' => $baseurl . '/index.php?mode=backup',
+								'text' => $LANG_DBMAN['menu_backup']
+		),
+		'list' => array(
+								'url' => $baseurl . '/index.php',
+								'text' => $LANG_DBMAN['menu_list']
+		),
+		'restore' => array(
+								'url' => $baseurl . '/index.php?mode=restore',
+								'text' => $LANG_DBMAN['menu_restore']
+		)
+	);
+	
+// +---------------------------------------------------------------------------+
+// | Geeklog Plugin API Implementations                                        |
+// +---------------------------------------------------------------------------+
+
+// ============================================================================
+//		MAIN
+// ============================================================================
+
+/*
+ * Returns the items for this plugin that should appear on the main menu
+ *
+ * NOTE: this MUST return the url/value pairs in the following format
+ * $<arrayname>[<label>] = <url>
+ */
+
+/*
+function plugin_getmenuitems_dbman()
+{
+    global $_CONF, $_DBMAN_CNF, $LANG_DBMAN, $baseurl;
+
+    $menulabel = 'Dbman';
+    $menuurl   = $baseurl . '/index.php';
+
+    $menuitems = array();
+		if (SEC_hasRights('dbman.edit')) {
+    	$menuitems["$menulabel"] = $menuurl;
+			return $menuitems;
+		} else {
+			return false;
+		}
+	}
+*/
+
+/*
+ * Geeklog is checking to see if this plugin supports comments, tell it no.
+ *
+ * NOTE: to support comments you must use the same date/time based ID for your
+ * widget.  In other words, to make primary keys for your plugin you should call
+ * makesid().  Comments are keyed off of that...it is a limitation on how Geeklog
+ * does comments.
+ */
+
+	function plugin_commentsupport_dbman()
+	{
+		// dbman will not use comments
+		return false;
+	}
+
+/*
+ * This will put an option for the plugin in the command and control block on
+ * moderation.php
+ *
+ * Add the plugin name, icon and link to the command and control block in moderation.php
+ *
+ * @return   array   Array containing (plugin name, admin url, url of plugin icon)
+ *
+ */
+
+	function plugin_cclabel_dbman() 
+	{
+		global $_CONF, $baseurl;
+
+		return array('dbman', $baseurl . '/index.php', $baseurl . '/images/dbman.png');
+	}
+
+/*
+ * Returns the administrative option for this plugin
+ *
+ * Adds the plugin to the Admin menu
+ *
+ * Universal Plugin:  Modify/Uncomment use it
+ *
+ * @return array Array containing (plugin name, plugin admin url,
+ *	 # of items in plugin or '')
+ *
+ */
+ 
+	function plugin_getadminoption_dbman() 
+	{
+		global $_CONF, $baseurl;
+
+		if (SEC_hasRights('dbman.edit')) {
+			return array('dbman', $baseurl . '/index.php', '');
+    }
+	}
+
+/*
+ * Removes the datastructures for this plugin from the Geeklog database.
+ * This routine will get called from the Plugin install program if user select
+ * De-Install or if Delete is used in the Plugin Editor.
+ * The Plugin Installer will also call this routine upon and install error to remove
+ * anything it has created.
+ * The Plugin installer will pass the optional parameter which will then double check
+ * that plugin has first been disabled. 
+ * 
+ * For this plugin, this routine will also remove the Block definition.
+ * 
+ * Returns True if all Plugin related data is removed without error
+ *
+ * @param  string  $installCheck  Default is blank but if set, check if plugin
+ * is disabled first
+ * 
+ * @return   boolean True if successful false otherwise
+ */  
+
+function plugin_uninstall_dbman($installCheck = '')
+	{
+    global $_TABLES, $LANG_DBMAN;
+
+    $pi_name  = 'dbman';
+    $NEW_FEATURES = array('dbman.edit');
+    
+    // Check and see if plugin is still enabled - if so display warning and exit
+    if ($installCheck != '' && DB_getItem($_TABLES['plugins'], 'pi_enabled', 'pi_name = "' .$pi_name . '"')) {
+	    COM_errorLog("Plugin is installed and enabled.  Disable first if you want to de-install it", 1);
+			$display .= COM_startBlock($LANG_DBMAN['warning']);
+			$display .= $LANG_DBMAN['enabled'];
+			$display .= COM_endBlock();
+			echo $display;
+			return false;
+			exit;
+		}
+    	
+		// Ok to proceed and delete plugin
+
+    // Unregister the plugin with Geeklog
+    COM_errorLog('Attempting to unregister the Dbman plugin from Geeklog',1);
+    DB_query("DELETE FROM {$_TABLES['plugins']} WHERE pi_name = '{$pi_name}'",1);
+    
+    // Remove all the associated features -- access rights
+    foreach ($NEW_FEATURES as $feature) {
+			COM_errorLog("Removing '$feature' feature and rights to it", 1);
+			$feat_id = DB_getItem($_TABLES['features'], 'ft_id', "ft_name = '$feature'");
+			DB_query("DELETE FROM {$_TABLES['access']} WHERE acc_ft_id = $feat_id",1);
+			DB_query("DELETE FROM {$_TABLES['features']} WHERE ft_id = $feat_id",1);
+    }
+		
+		// Get group_id, if any
+		$rst = DB_query("SELECT value FROM {$_TABLES['vars']} WHERE name = '{$pi_name}_gid'", 1);
+		if ($rst !== false) {
+			$ar = DB_fetcharray($rst);
+			$group_id = $ar[0];
+			DB_query("DELETE FROM {$_TABLES['vars']} WHERE name = '{$pi_name}_gid'", 1);
+			DB_query("DELETE FROM {$_TABLES['group_assignments']} WHERE (ug_main_grp_id = $group_id) AND (ug_grp_id = 1)", 1);
+			DB_query("DELETE FROM {$_TABLES['groups']} WHERE grp_id = $group_id", 1);
+		}
+    COM_errorLog('Succesfully uninstalled the Dbman Plugin!', 1);
+    return true;
+	}
+
+/*
+ * Returns the version for this plugin
+ *
+ * @return string VersionNo
+ */
+
+	function plugin_chkVersion_dbman()
+	{
+		global $_DBMAN_CNF;
+		
+		return $_DBMAN_CNF['version'];
+	}
+
+/*
+ *  Helper Functions
+ */
+ 
+function DBMAN_compareBackupFiles ($pFileA, $pFileB) {
+	global $_CONF;
+
+	$lFiletimeA = filemtime($_CONF['backup_path'] . $pFileA);
+	$lFiletimeB = filemtime($_CONF['backup_path'] . $pFileB);
+	if ($lFiletimeA == $lFiletimeB) {
+		return 0;
+	}
+
+	return ($lFiletimeA > $lFiletimeB) ? -1 : 1;
+}
+
+/*
+ * adopted from database.php.  To avoid collision, renamed as DBMAN_listBackupFiles
+ */
+
+function DBMAN_listBackupFiles() {
+	global $_CONF;
+	
+	$backups = array();
+	$fd = opendir($_CONF['backup_path']);
+	$index = 0;
+	while ((false !== ($file = @readdir($fd)))) {
+		if ($file <> '.' && $file <> '..' && $file <> 'CVS'
+		 && (preg_match ('/\.sql$/i', $file) || preg_match ('/\.sql\.gz$/i', $file))) {
+			$index ++;
+			clearstatcache();
+			$backups[] = $file;
+		}
+	}
+	
+	// AS, 2004-03-29 - Sort backup files by date, newest first.
+	// Order given by 'readdir' might not be correct.
+	usort($backups, 'DBMAN_compareBackupFiles');
+	$backups = array_slice ($backups, 0, 10);
+	return $backups;
+}
+
+/*
+ * Show backup options
+ *
+ * @return (string) backup options in HTML format
+ */
+
+function DBMAN_backupoptions($add_drop_table, $backup_blob, $compress_data,
+	$download_as_file) {
+
+	global $_CONF, $LANG_DBMAN, $dbman_menu, $baseurl;
+	require_once($_CONF['path_system'] . 'lib-admin.php');
+	
+	$retval = '<form action="./index.php" method="post">';
+	$menu_arr = array (
+			$dbman_menu['admin'],
+			$dbman_menu['list'],
+			$dbman_menu['restore']
+	);
+
+	$header_arr = array(      # dislay 'text' and use table field 'option'
+		array('text' => $LANG_DBMAN['option'], 'field' => 'option')
+	);
+
+	$str_add_drop_table   = $add_drop_table ? 'checked="checked"' : '';
+	$str_backup_blob      = $backup_blob ? 'checked="checked"' : '';
+	$str_compress_data    = $compress_data ? 'checked="checked"' : '';
+	$str_download_as_file = $download_as_file ? 'checked="checked"' : '';
+
+	$data_arr = array(
+		array(
+			'option' => "<input name=\"add_drop_table\" type=\"checkbox\" {$str_add_drop_table}>"
+				. "{$LANG_DBMAN['add_drop_table']}"
+		),
+		array(
+			'option' => "<input name=\"backup_blob\" type=\"checkbox\" {$str_backup_blob}>"
+				. "{$LANG_DBMAN['backup_blob']}"
+		)
+	);
+	
+	if (function_exists('gzopen')) {
+		$data_arr[] = array(
+			'option' => "<input name=\"compress_data\" type=\"checkbox\" {$str_compress_data}>"
+				. "{$LANG_DBMAN['compress_data']}"
+		);
+	}
+	$data_arr[] = array(
+			'option' => "<input name=\"download_as_file\" type=\"checkbox\" {$str_download_as_file}>" . "{$LANG_DBMAN['download_as_file']}"
+	);
+	
+	$text_arr = array(
+		'has_menu' => true,
+		'instructions' => $LANG_DBMAN['db_explanation_backup'],
+		'icon' => $baseurl . '/images/dbman.png',
+		'title' => $LANG_DBMAN['menu_backup']
+	);
+
+	$retval .= ADMIN_simpleList("", $header_arr, $text_arr, $data_arr, $menu_arr);
+	$retval .= '<input name="mode" type="hidden" value="backup">';
+	$retval .= '<input name="cmd" type="hidden" value="do_backup">';
+	$retval .= "<input name='submit' type='submit' value='{$LANG_DBMAN['backup_now']}'>";
+	$retval .= '</form>';
+	return $retval;
+}
+
+/*
+ * Show restore options
+ *
+ * @return (string) restore options in HTML format
+ */
+
+function DBMAN_restoreoptions($restore_blob) {
+
+	global $_CONF, $LANG_DBMAN, $dbman_menu, $baseurl;
+	require_once($_CONF['path_system'] . 'lib-admin.php');
+	
+	$retval = '<form action="./index.php" method="post">';
+	$menu_arr = array (
+			$dbman_menu['admin'],
+			$dbman_menu['list'],
+			$dbman_menu['backup']
+	);
+
+	$header_arr = array(      # dislay 'text' and use table field 'file' & 'size'
+		array('text' => $LANG_DBMAN['backup_file'], 'field' => 'file'),
+		array('text' => $LANG_DBMAN['size'], 'field' => 'size')
+	);
+
+	$backups = DBMAN_listBackupFiles();
+	$data_arr = array();
+	foreach ($backups as $backup) {
+		$backupfile     = $_CONF['backup_path'] . $backup;
+		$backupfilesize = COM_numberFormat(filesize($backupfile));
+		$data_arr[] = array(
+			'file' => "<input name=\"filename\" type=\"radio\" value=\"$backupfile\">" . $backup,
+			'size' => $backupfilesize . " <b>" . $LANG_DBMAN['bytes'] . "</b>"
+		);
+	}
+	
+	$text_arr = array(
+		'has_menu' => true,
+		'instructions' => $LANG_DBMAN['db_explanation_restore'],
+		'icon' => $baseurl . '/images/dbman.png',
+		'title' => $LANG_DBMAN['menu_restore']
+	);
+	$retval .= ADMIN_simpleList("", $header_arr, $text_arr, $data_arr, $menu_arr);
+
+	$str_restore_blob = $restore_blob ? 'checked="checked"' : '';
+	$retval .= '<table class=\'plugin\'>';
+	$retval .= "<tr><th>{$LANG_DBMAN['option']}</th></tr>";
+	$retval .= "<tr><td><input name=\"restore_blob\" type=\"checkbox\" {$str_restore_blob}>{$LANG_DBMAN['restore_blob']}</td></tr>";
+	$retval .= '</table>';
+	$retval .= '<input name="mode" type="hidden" value="restore">';
+	$retval .= '<input name="cmd" type="hidden" value="restore_next">';
+	$retval .= "<input name='submit' type='submit' value='{$LANG_DBMAN['next']}'>";
+	$retval .= '</form>';
+	return $retval;
+}
+
+/*
+ * List backup files ('geeklog_db_backup_YYYY_MM_DD_hh:mm:ss.sql[.gz]')
+ * in the /backups directory.
+ *
+ * @return (string) a list of backup files in HTML format
+ */
+
+function DBMAN_listbackups() {
+	global $_CONF, $_TABLES, $_IMAGE_TYPE, $LANG_ADMIN, $LANG_DBMAN;
+	global $dbman_menu, $baseurl;
+	
+	require_once($_CONF['path_system'] . 'lib-admin.php');
+	$retval = '';
+
+	if (is_writable($_CONF['backup_path'])) {
+		$backups = DBMAN_listBackupFiles();
+		$data_arr = array();
+		foreach ($backups as $backup) {
+			$backupfile     = $_CONF['backup_path'] . $backup;
+			$backupfilesize = COM_numberFormat(filesize($backupfile));
+			$data_arr[] = array(
+				'file' => $backup,
+				'size' => $backupfilesize . " <b>" . $LANG_DBMAN['bytes'] . "</b>"
+			);
+		}
+
+		$menu_arr = array (
+			$dbman_menu['admin'],
+			$dbman_menu['backup'],
+			$dbman_menu['restore']
+		);
+
+		$header_arr = array(      # dislay 'text' and use table field 'field'
+			array('text' => $LANG_DBMAN['backup_file'], 'field' => 'file'),
+			array('text' => $LANG_DBMAN['size'], 'field' => 'size')
+		);
+
+		$text_arr = array(
+			'has_menu' => true,
+			'instructions' => $LANG_DBMAN['db_explanation_list'],
+			'icon' => $baseurl . '/images/dbman.png',
+			'title' => $LANG_DBMAN['last_ten_backups']
+		);
+		$retval .= ADMIN_simpleList("", $header_arr, $text_arr, $data_arr, $menu_arr);
+	} else {
+		$retval .= COM_startBlock ($LANG08[06], '',
+		COM_getBlockTemplate ('_msg_block', 'header'));
+		$retval .= $LANG_DBMAN['not_writable'];
+		COM_errorLog ($_CONF['backup_path'] . ' is not writable.', 1);
+		$retval .= COM_endBlock (COM_getBlockTemplate ('_msg_block', 'footer'));
+	}
+	return $retval;
+}
+
+/*
+ * Create a backup file ('geeklog_db_backup_YYYY_MM_DD_hh:mm:ss.sql[.gz]')
+ * in the /backups directory.
+ *
+ * @parameters:
+ *   $add_drop_table (boolean)  : if true, adds "DROP TABLE IF EXISTS ..." before
+ *                                  "CREATE TABLE ..."
+ *   $backup_blob (boolean)     : if true, backups blob fields as well in the form of
+ *                                  comment("-- ") for the compatibility with phpMyAdmin
+ *   $compress_data (boolean)   : if true, tries to compress SQL statements in the
+ *                                  '.gz' format.  In case of failure, this function
+ *                                  tries to backup DB again without compression
+ *   $download_as_file (boolean): if true, tries to download the resulting SQL file
+ *
+ * @return (int) 0 = success, 1 = success(file downloaded), 2 = failure
+ */
+
+function DBMAN_backup($add_drop_table = false, $backup_blob = false,
+	$compress_data = false, $download_as_file = false) {
+		
+	global $_CONF, $_DB_host, $_DB_name, $_DB_dbms, $_DBMAN_CONF;
+	global $dbman_string_types, $dbman_blob_types;
+		
+	COM_errorLog("Dbman: Started backuping.", 1);
+	$db_name = dbman_quoteItem($_DB_name);
+	$ver     = dbman_getDBversion();
+	$bkdate  = date("Y-m-d H:i:s O");
+	$sql     = <<<EOD1
+-- ------------------------------------------------------
+-- Geeklog Dbman Plugin {$_DBMAN_CONF['version']}
+--
+-- Host: {$_DB_host}    Database Name: {$db_name}
+-- ------------------------------------------------------
+-- Database: {$_DB_dbms}    Version: {$ver}
+--
+-- Backup made: {$bkdate}
+-- ------------------------------------------------------
+
+
+EOD1;
+	$foreign_keys = array();
+	
+	//	Get a list of table names
+	$tables = dbman_getTableList();
+
+	//	Get table definitions
+	foreach ($tables as $table) {
+		$is_to_be_quoted = array();
+		$is_blob         = array();
+		$def = dbman_getTableDef($table['name']);
+		$lines = explode("\n", $def);
+		$new_lines = array();
+		for ($i = 0; $i < count($lines); $i ++) {
+			$line = $lines[$i];
+			// PHP 4.x.x doesn't support stripos
+			if (eregi('FOREIGN KEY', $line) === false
+			 && eregi('CONSTRAINT', $line) === false) {
+				// Column definition found
+				if (eregi('^[ ]*`(.*)`[ ]+([a-zA-Z0-9_]*).*$', $line, $match) > 0) {
+					$column_name = $match[1];
+					$column_def  = strtoupper(trim($match[2]));
+					$is_to_be_quoted[$column_name] = in_array($column_def, $dbman_string_types);
+					$is_blob[$column_name]         = in_array($column_def, $dbman_blob_types);
+				}
+				$new_lines[] = $line;
+			} else {
+				//  Foreign key/Constraint found
+				$line = rtrim($line);
+				//  If this line ends with a ',', delete it
+				if (strpos($line, ',') == strlen($line) - 1) {
+					$line = substr($line, 0, strlen($line) - 1);
+				} else {  // This line is the last row of the definition.  So delete the ','
+									// at the end of the previous line.
+					$new_lines[$i - 1] = substr($new_lines[$i - 1], 0, strlen($new_lines[$i - 1]) - 1);
+				}
+				$foreign_keys[] = "ALTER TABLE " . dbman_quoteItem($table['name']) . "\n" 
+					. "  ADD " . $line . ";";
+			}
+		}
+		$tables[$table['name']]['def']             = implode("\n", $new_lines);
+		$tables[$table['name']]['is_to_be_quoted'] = $is_to_be_quoted;
+		$tables[$table['name']]['is_blob']         = $is_blob;
+	}
+
+	//	Get table contents
+	
+	foreach ($tables as $table) {
+	
+		//	Put table definition into $sql
+		$sql .= "--\n";
+		$sql .= '-- Table structure for table ' . dbman_quoteItem($table['name']) . "\n";
+		$sql .= "--\n\n";
+		if ($add_drop_table) {
+			$sql .= 'DROP TABLE IF EXISTS ' . dbman_quoteItem($table['name']) . ";\n\n";
+		}
+		$sql .= $tables[$table['name']]['def'] . "\n\n";
+		$sql .= "--\n";
+		$sql .= '-- Dumping data for table ' . dbman_quoteItem($table['name']) . "\n";
+		$sql .= "--\n\n";
+
+		//	Build an SQL to pump out data
+		$rst = DB_query("SELECT * FROM {$table['name']};");
+		if ($rst !== false) {
+			//  Prefetch $table['is_to_be_quoted'], $table['is_blob']
+			$is_to_be_quoted = $table['is_to_be_quoted'];
+			$is_blob         = $table['is_blob'];
+			$has_blob_field  = in_array(true, $is_blob);
+			while (($r = DB_fetcharray($rst, false)) !== false) {		//  Fetch an associative array alone
+				$column_values = array();
+				foreach ($r as $column_name => $column_value) {
+					if (is_null($column_value)) {
+						$coulmn_value = 'NULL';
+					} else if ($is_to_be_quoted[$column_name]) {
+						$column_value = dbman_quoteString($column_value);
+					} else if ($is_blob[$column_name]) {
+						if ($backup_blob) {
+							$column_value = "\"\n-- B:" 
+								. chunk_split(base64_encode($column_value), 75, "\n-- B:");
+							$column_value = substr($column_value, 0, strlen($column_value) - 2) . 'Q:"';
+						} else {
+							$column_value = "'(BLOB)'";
+						}
+					}
+					$column_values[] = $column_value;
+				}
+				if ($has_blob_field && $backup_blob) {
+					$sql .= '-- Q:';
+				}
+				$sql .= "INSERT INTO " . dbman_quoteItem($table['name']) . " VALUES (" 
+					. implode(',' , $column_values) . ");\n";
+			}
+		}
+		$sql .= "\n";
+	}
+	
+	//  Append foreign key definitions if any
+	if (count($foreign_keys) > 0) {
+		$sql .= "--\n-- FOREIGN KEY and CONSTRAINT definitions\n--\n\n";
+		$sql .= implode("\n", $foreign_keys) . "\n";
+	}
+	
+	//	Save data into a file in the 'backups' dir
+	if (! is_writable($_CONF['backup_path'])) {
+		COM_errorLog("Dbman: the '/backups' directory is not writable.  Please chmod it to 775 or 777.");
+		return 2;
+		exit;
+	}
+	
+	$is_success  = false;			//  flag to show a success in saving
+	$curdatetime = date("Y_m_d_H_i_s");
+	$backupfile  = "{$_CONF['backup_path']}{$_DB_name}_db_backup_{$curdatetime}.sql";
+	if (file_exists($backupfile) && ! is_writable($backupfile)) {
+		COM_errorLog("Dbman: Couldn't create a backup file..");
+		return 2;
+		exit;
+	}
+	
+	//  If $compress_data is true, try to compress the data
+	if ($compress_data && function_exists('gzopen')) {
+		$backupfile .= '.gz';
+		$fh = @gzopen($backupfile, "wb9");
+		if ($fh === false) {
+			COM_errorLog("Dbman: Couldn't write data into a backup-file.", 1);
+		} else {
+			$rst = gzwrite($fh, $sql);
+			if ($rst === false) {
+				COM_errorLog("Dbman: Couldn't write data into a backup-file.", 1);
+				@gzclose($fh);
+			} else {
+				COM_errorLog("Dbman: Backup completed successfully.", 1);
+				$is_success = @gzclose($fh);
+			}
+		}
+	}
+	
+	//  If $compress_data is false, or when there is a failure to compress, save 
+	//  backup files without compression
+	if (!$is_success) {
+		$fh = @fopen($backupfile, "wb");
+		if ($fh === false) {
+			COM_errorLog("Dbman: Couldn't write data into a backup-file.", 1);
+		} else {
+			$rst = fwrite($fh, $sql);
+			if ($rst === false) {
+				COM_errorLog("Dbman: Couldn't write data into a backup-file.", 1);
+			} else {
+				COM_errorLog("Dbman: Backup completed successfully.", 1);
+			}
+			$is_success = @fclose($fh);
+		}
+	}
+
+	if (! $is_success) {		// couldn't backup at all
+		return 2;
+		exit;
+	} else {
+		if ($download_as_file) {
+			$info = pathinfo($backupfile);
+			if ($info['extension'] == 'gz') {
+				header("Content-type: application/x-gzip");
+			} else {
+				header("Content-type: text/x-sql");
+//			header("Content-type: application/octetstream");
+			}
+			header("Content-Disposition: attachment; filename={$info['basename']}");
+			readfile($backupfile);
+			return 1;
+			exit;
+		}
+	}
+	return 0;
+}
+
+/*
+ * Restore from a designated backup file
+ *   ('geeklog_db_backup_YYYY_MM_DD_hh:mm:ss.sql[.gz]') in the /backups directory.
+ *
+ * @parameters:
+ *   $filename (string)         : the full path of a backup file residing in the
+ *                                  /backups directory
+ *   $restore_blob (boolean)    : if true, tries to restore blob fields as well by
+ *                                 analyzing comment fields.  If there is no
+ *                                 commented out data, this functions writes
+ *                                 (BLOB) into the field
+ *
+ * @return (int) 0 = success, 1 = success(file downloaded), 2 = failure
+ */
+
+function DBMAN_restore($filename, $restore_blob = false) {
+
+}
+
+?>
