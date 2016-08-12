@@ -5,7 +5,7 @@
 // +---------------------------------------------------------------------------+
 // | geeklog/plugins/dbman/autoinstall.php                                     |
 // +---------------------------------------------------------------------------+
-// | Copyright (C) 2011-2012 mystral-kk - geeklog AT mystral-kk DOT net        |
+// | Copyright (C) 2011 mystral-kk - geeklog AT mystral-kk DOT net             |
 // |                                                                           |
 // | Constructed with the Universal Plugin                                     |
 // +---------------------------------------------------------------------------+
@@ -26,7 +26,7 @@
 // |                                                                           |
 // +---------------------------------------------------------------------------+
 
-if (stripos($_SERVER['PHP_SELF'], basename(__FILE__)) !== FALSE) {
+if (strpos(strtolower($_SERVER['PHP_SELF']), strtolower(basename(__FILE__))) !== FALSE) {
 	die('This file can not be used on its own!');
 }
 
@@ -77,7 +77,8 @@ function plugin_autoinstall_dbman($pi_name) {
 * @return   boolean             TRUE on success, otherwise FALSE
 * @see      plugin_initconfig_dbman
 */
-function plugin_load_configuration_dbman($pi_name) {
+function plugin_load_configuration_dbman($pi_name)
+{
     global $_CONF;
     
     $base_path = $_CONF['path'] . 'plugins/' . $pi_name . '/';
