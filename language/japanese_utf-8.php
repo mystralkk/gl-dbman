@@ -21,7 +21,7 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #
 ###############################################################################
-# $Id: japanese_utf-8.php,v 1.3 2007/04/05 00:00:57 kenji Exp $
+# $Id: japanese_utf-8.php,v 1.4 2007/10/28 00:46:45 kenji Exp $
 
 /*
  * This is the japanese_utf-8 language page for the Geeklog Dbman Plug-in! 
@@ -47,7 +47,7 @@ $LANG_DBMAN = array(
 	'backup_blob' => 'BLOBもバックアップする(phpMyAdminと互換性はありません！)',
 	'backup_failure' => 'バックアップできませんでした。詳しくはエラーログをご覧ください。',
 	'backup_file' => 'バックアップされているファイル',
-	'backup_now' => 'バックアップ開始',
+	'backup_now' => 'バックアップ作成',
 	'backup_success' => 'バックアップしました。',
 	'bytes' => 'バイト',
 	'check_all' => 'すべてチェックする',

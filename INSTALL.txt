@@ -71,6 +71,9 @@ That's it.
 
 #####  REVISION HISTORY #####
 
+ver 0.4.7 2007/12/20  Fixed to respect database prefix ($_DB_table_prefix) in
+                      backuping and restoring database.
+
 ver 0.4.6 2007/10/28  Fixed not to display Dbman icon in the CC panel for
                       non-Dbman-admin users.
 
@@ -80,18 +83,18 @@ ver 0.4.4 2007/03/25  Fixed to save CRLF correctly.
 
 ver 0.4.3 2006/08/06  Now you can download backupped files simply by clicking
                       their respectives URL links.
-		      Added SQL console to input and execute SQL.
+                      Added SQL console to input and execute SQL.
 
 ver 0.4.2 2006/07/03  Modified to use $_Dbman_CONF['backup_except'] in deciding
                       whether a table's contents should not be backupped.  By
-		      default, Dbman *** doesn't *** backup tables created by
-		      GUS (Geeklog Usage Stats) plugin.  If you'd like to change
-		      this, edit $_DBMAN_CONF['backup_except'] in
-		      <geeklog_dir>/plugins/dbman/config.php.
+                      default, Dbman *** doesn't *** backup tables created by
+                      GUS (Geeklog Usage Stats) plugin.  If you'd like to change
+                      this, edit $_DBMAN_CONF['backup_except'] in
+                      <geeklog_dir>/plugins/dbman/config.php.
 
 ver 0.4.1 2006/07/03  Modified to backup records in small chunks (default 100)
                       to avoid "MySQL Client Out of Memory" error.  Modfied
-		      to enabled plugin_upgrade_Dbman() to work properly.
+                      to enabled plugin_upgrade_Dbman() to work properly.
 
 ver 0.4   2006/05/04  Implemented a feature of restoring data from backup file.
 

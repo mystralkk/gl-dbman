@@ -23,54 +23,55 @@
 // | Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.           |
 // +---------------------------------------------------------------------------+
 //
-// $Id: functions.inc,v 1.3 2007/04/05 00:00:56 kenji Exp $
+// $Id: functions.inc,v 1.4 2007/10/28 00:46:45 kenji Exp $
 /* 
  * Dbman plugin general functions file
  */
 
 global $_DB_dbms;				// needs to be declared while UnInstallation
 
-if ( !defined( 'LB' ) ) {
-	define( 'LB', "\n" );
+if (!defined('LB')) {
+	define('LB', "\n");
 }
 
 $langfile = $_CONF['path'] . 'plugins/dbman/language/' . $_CONF['language'] . '.php';
-if (file_exists ($langfile)) {
-    include_once ($langfile);
+clearstatcache();
+if (file_exists($langfile)) {
+    include_once $langfile;
 } else {
-	include_once ($_CONF['path'] . 'plugins/dbman/language/english.php');
+	include_once $_CONF['path'] . 'plugins/dbman/language/english.php';
 }
 
-require_once ($_CONF['path'] . 'plugins/dbman/config.php');
+require_once $_CONF['path'] . 'plugins/dbman/config.php';
 
 //	Include DB-specific functions
 
 if (strcasecmp($_DB_dbms, 'mysql') == 0) {
-	include_once('sql/dbman-mysql.inc.php');
+	include_once 'sql/dbman-mysql.inc.php';
 } else {
 	COM_errorLog("Database type '{$_DB_dbms}' is not supported in Dbman.", 1);
 	exit;
 }
 
 $baseurl = $_CONF['site_admin_url'] . '/plugins/dbman';
-$dbman_menu = array(
-	'admin' => array(
+$dbman_menu = array (
+	'admin' => array (
 				'url'  => $_CONF['site_admin_url'],
 				'text' => $LANG_ADMIN['admin_home']
 	),
-	'backup' => array(
+	'backup' => array (
 				'url'  => $baseurl . '/index.php?cmd=backup_option',
 				'text' => $LANG_DBMAN['menu_backup']
 	),
-	'list' => array(
+	'list' => array (
 				'url'  => $baseurl . '/index.php',
 				'text' => $LANG_DBMAN['menu_list']
 	),
-	'restore' => array(
+	'restore' => array (
 				'url'  => $baseurl . '/index.php?cmd=restore_select',
 				'text' => $LANG_DBMAN['menu_restore']
 	),
-	'console' => array(
+	'console' => array (
 				'url' => $baseurl . '/index.php?cmd=console',
 				'text' => $LANG_DBMAN['menu_console']
 	)
@@ -114,30 +115,6 @@ class DBMAN_timer {
 // ============================================================================
 
 /*
- * Returns the items for this plugin that should appear on the main menu
- *
- * NOTE: this MUST return the url/value pairs in the following format
- * $<arrayname>[<label>] = <url>
- */
-
-/*
-function plugin_getmenuitems_dbman() {
-    global $_CONF, $_DBMAN_CONF, $LANG_DBMAN, $baseurl;
-
-    $menulabel = 'Dbman';
-    $menuurl   = $baseurl . '/index.php';
-
-    $menuitems = array();
-	if (SEC_hasRights('dbman.edit')) {
-    	$menuitems["$menulabel"] = $menuurl;
-		return $menuitems;
-	} else {
-		return false;
-	}
-}
-*/
-
-/*
  * Geeklog is checking to see if this plugin supports comments, tell it no.
  *
  * NOTE: to support comments you must use the same date/time based ID for your
@@ -147,7 +124,6 @@ function plugin_getmenuitems_dbman() {
  */
 
 function plugin_commentsupport_dbman() {
-	// dbman will not use comments
 	return false;
 }
 
@@ -164,7 +140,9 @@ function plugin_commentsupport_dbman() {
 function plugin_cclabel_dbman() {
 	global $_CONF, $baseurl;
 
-	return array('Dbman', $baseurl . '/index.php', $baseurl . '/images/dbman.png');
+	if (SEC_hasRights('dbman.edit')) {
+		return array ('Dbman', $baseurl . '/index.php', $baseurl . '/images/dbman.png');
+	}
 }
 
 /*
@@ -183,7 +161,7 @@ function plugin_getadminoption_dbman() {
 	global $_CONF, $baseurl;
 
 	if (SEC_hasRights('dbman.edit')) {
-		return array('Dbman', $baseurl . '/index.php', '');
+		return array ('Dbman', $baseurl . '/index.php', '');
 	}
 }
 
@@ -224,17 +202,16 @@ function plugin_uninstall_dbman($installCheck = '') {
     global $_TABLES, $LANG_DBMAN;
 
     $pi_name  = 'dbman';
-    $NEW_FEATURES = array('dbman.edit');
+    $NEW_FEATURES = array ('dbman.edit');
     
     // Check and see if plugin is still enabled - if so display warning and exit
-    if ($installCheck != '' && DB_getItem($_TABLES['plugins'], 'pi_enabled', 'pi_name = "' .$pi_name . '"')) {
+    if ($installCheck != '' AND DB_getItem($_TABLES['plugins'], 'pi_enabled', 'pi_name = "' .$pi_name . '"')) {
 	    COM_errorLog("Plugin is installed and enabled.  Disable first if you want to de-install it", 1);
 			$display .= COM_startBlock($LANG_DBMAN['warning']);
 			$display .= $LANG_DBMAN['enabled'];
 			$display .= COM_endBlock();
 			echo $display;
 			return false;
-			exit;
 		}
     	
 		// Ok to proceed and delete plugin
@@ -331,7 +308,7 @@ function DBMAN_listBackupFiles() {
 	$backups = array();
 	$fd = opendir($_CONF['backup_path']);
 	while ((false !== ($file = @readdir($fd)))) {
-		if (preg_match ('/\.sql$/i', $file) || preg_match ('/\.sql\.gz$/i', $file)) {
+		if (preg_match('/\.sql$/i', $file) OR preg_match('/\.sql\.gz$/i', $file)) {
 			$backups[] = $file;
 		}
 	}
@@ -353,14 +330,14 @@ function DBMAN_backupOptions($add_drop_table, $backup_blob, $compress_data,
 	$download_as_file) {
 
 	global $_CONF, $LANG_DBMAN, $dbman_menu, $baseurl;
-	require_once($_CONF['path_system'] . 'lib-admin.php');
+	require_once $_CONF['path_system'] . 'lib-admin.php';
 
 // checks if DB has any BLOB field
 
 	$has_blob = false;
 	$table_names = dbman_getTableList();
 	foreach ($table_names as $table_name) {
-		$has_blob = $has_blob || dbman_isHasBLOBField($table_name);
+		$has_blob = $has_blob OR dbman_isHasBLOBField($table_name);
 	}
 	$retval = '<form action="./index.php" method="post">';
 	$menu_arr = array (
@@ -370,8 +347,8 @@ function DBMAN_backupOptions($add_drop_table, $backup_blob, $compress_data,
 		$dbman_menu['console']
 	);
 
-	$header_arr = array(      # dislay 'text' and use table field 'option'
-		array('text' => $LANG_DBMAN['option'], 'field' => 'option')
+	$header_arr = array (      # dislay 'text' and use table field 'option'
+		array ('text' => $LANG_DBMAN['option'], 'field' => 'option')
 	);
 
 	$str_add_drop_table   = $add_drop_table ? 'checked="checked"' : '';
@@ -379,30 +356,30 @@ function DBMAN_backupOptions($add_drop_table, $backup_blob, $compress_data,
 	$str_compress_data    = $compress_data ? 'checked="checked"' : '';
 	$str_download_as_file = $download_as_file ? 'checked="checked"' : '';
 
-	$data_arr = array();
-	$data_arr[] = array(
+	$data_arr = array ();
+	$data_arr[] = array (
 		'option' => "<input name=\"add_drop_table\" type=\"checkbox\" {$str_add_drop_table}>"
 				. "{$LANG_DBMAN['add_drop_table']}"
 	);
 	
 	if ($has_blob) {
-		$data_arr[] = array(
+		$data_arr[] = array (
 			'option' => "<input name=\"backup_blob\" type=\"checkbox\" {$str_backup_blob}>" . "{$LANG_DBMAN['backup_blob']}"
 		);
 	}
 	
 	if (function_exists('gzopen')) {
-		$data_arr[] = array(
+		$data_arr[] = array (
 			'option' => "<input name=\"compress_data\" type=\"checkbox\" {$str_compress_data}>"
 				. "{$LANG_DBMAN['compress_data']}"
 		);
 	}
 	
-	$data_arr[] = array(
+	$data_arr[] = array (
 		'option' => "<input name=\"download_as_file\" type=\"checkbox\" {$str_download_as_file}>" . "{$LANG_DBMAN['download_as_file']}"
 	);
 	
-	$text_arr = array(
+	$text_arr = array (
 		'has_menu' => true,
 		'instructions' => $LANG_DBMAN['db_explanation_backup'],
 		'icon' => $baseurl . '/images/dbman.png',
@@ -410,9 +387,9 @@ function DBMAN_backupOptions($add_drop_table, $backup_blob, $compress_data,
 	);
 
 	$retval .= ADMIN_simpleList("", $header_arr, $text_arr, $data_arr, $menu_arr);
-	$retval .= '<input name="cmd" type="hidden" value="backup">';
-	$retval .= "<input name='submit' type='submit' value='{$LANG_DBMAN['backup_now']}'>";
-	$retval .= '</form>';
+	$retval .= '<input name="cmd" type="hidden" value="backup">'
+			.  "<input name='submit' type='submit' value='{$LANG_DBMAN['backup_now']}'>"
+			.  '</form>';
 	return $retval;
 }
 
@@ -425,7 +402,7 @@ function DBMAN_backupOptions($add_drop_table, $backup_blob, $compress_data,
 function DBMAN_restoreSelectFile() {
 
 	global $_CONF, $LANG_DBMAN, $dbman_menu, $baseurl;
-	require_once($_CONF['path_system'] . 'lib-admin.php');
+	require_once $_CONF['path_system'] . 'lib-admin.php';
 	
 	$retval = '<form action="./index.php" method="post">';
 	$menu_arr = array (
@@ -435,32 +412,38 @@ function DBMAN_restoreSelectFile() {
 		$dbman_menu['console']
 	);
 
-	$header_arr = array(      # dislay 'text' and use table field 'file' & 'size'
-		array('text' => $LANG_DBMAN['backup_file'], 'field' => 'file'),
-		array('text' => $LANG_DBMAN['size'], 'field' => 'size')
+	$header_arr = array (      # dislay 'text' and use table field 'file' & 'size'
+		array (
+			'text'  => $LANG_DBMAN['backup_file'],
+			'field' => 'file'
+		),
+		array (
+			'text'  => $LANG_DBMAN['size'],
+			'field' => 'size'
+		),
 	);
 
 	$backups = DBMAN_listBackupFiles();
-	$data_arr = array();
+	$data_arr = array ();
 	foreach ($backups as $backup) {
 		$backupfilename = $backup;
 		$backupfilesize = COM_numberFormat(filesize($_CONF['backup_path'] . $backupfilename));
-		$data_arr[] = array(
+		$data_arr[] = array (
 			'file' => "<input name=\"filename\" type=\"radio\" value=\"$backupfilename\">" . $backup,
 			'size' => $backupfilesize . " <b>" . $LANG_DBMAN['bytes'] . "</b>"
 		);
 	}
 	
-	$text_arr = array(
-		'has_menu' => true,
+	$text_arr = array (
+		'has_menu'     => true,
 		'instructions' => $LANG_DBMAN['db_explanation_restore'],
-		'icon' => $baseurl . '/images/dbman.png',
-		'title' => $LANG_DBMAN['menu_restore']
+		'icon'         => $baseurl . '/images/dbman.png',
+		'title'        => $LANG_DBMAN['menu_restore']
 	);
 	$retval .= ADMIN_simpleList("", $header_arr, $text_arr, $data_arr, $menu_arr);
-	$retval .= '<input name="cmd" type="hidden" value="restore_option">';
-	$retval .= "<input name='submit' type='submit' value='{$LANG_DBMAN['next']}'>";
-	$retval .= '</form>';
+	$retval .= '<input name="cmd" type="hidden" value="restore_option">'
+			.  "<input name='submit' type='submit' value='{$LANG_DBMAN['next']}'>"
+			.  '</form>';
 	return $retval;
 }
 
@@ -472,7 +455,7 @@ function DBMAN_restoreSelectFile() {
 
 function DBMAN_restoreOption($filename, $restore_blob = false) {
 	global $_CONF, $LANG_DBMAN, $dbman_menu, $baseurl;
-	require_once($_CONF['path_system'] . 'lib-admin.php');
+	require_once $_CONF['path_system'] . 'lib-admin.php';
 	
 	$retval    = '<form name="form_restore_option" action="./index.php" method="post">';
 	$tables    = dbman_getTableNameFromBackup($_CONF['backup_path'] . $filename);
@@ -493,17 +476,17 @@ function DBMAN_restoreOption($filename, $restore_blob = false) {
 				   . "<input type='button' value='" . $LANG_DBMAN["uncheck_all"]
 				   . "' onClick='checkData({$num_table}, false)'>";
 	
-	$header_arr = array(      # dislay 'text' and use table field 'option'
-		array(
-			'text' => $LANG_DBMAN['restore_header1'],
+	$header_arr = array (      # dislay 'text' and use table field 'option'
+		array (
+			'text'  => $LANG_DBMAN['restore_header1'],
 			'field' => 'table_name'
 		),
-		array(
-			'text' => $LANG_DBMAN['restore_header2'] . $link_to_table,
+		array (
+			'text'  => $LANG_DBMAN['restore_header2'] . $link_to_table,
 			'field' => 'table_structure'
 		),
-		array(
-			'text' => $LANG_DBMAN['restore_header3'] . $link_to_data,
+		array (
+			'text'  => $LANG_DBMAN['restore_header3'] . $link_to_data,
 			'field' => 'table_data'
 		)
 	);
@@ -513,43 +496,45 @@ function DBMAN_restoreOption($filename, $restore_blob = false) {
 	$i = 0;
 	foreach ($tables as $t) {
 		$hasBlob = ($hasBlob or dbman_isHasBLOBField($t));
-		$data_arr[] = array(
-			'table_name' => $t,
+		$data_arr[] = array (
+			'table_name'      => $t,
 			'table_structure' => "<input id ='restore_structure{$i}' name='restore_structure[]' type='checkbox' value='$t'>" . $LANG_DBMAN['restore'],
-			'table_data' => "<input id='restore_data{$i}' name='restore_data[]' type='checkbox' value='$t'>" . $LANG_DBMAN['restore']
+			'table_data'      => "<input id='restore_data{$i}' name='restore_data[]' type='checkbox' value='$t'>" . $LANG_DBMAN['restore']
 		);
 		$i ++;
 	};
 	
 	// Add links to Javascript
-	$data_arr[] = array(
+	$data_arr[] = array (
 		'table_name'      => $LANG_DBMAN["operation"],
 		'table_structure' => $link_to_table,
 		'table_data'      => $link_to_data
 	);
 	
 	$fname = pathinfo($_CONF['backup_path'] . $filename);
-	$text_arr = array(
-		'has_menu' => true,
+	$text_arr = array (
+		'has_menu'     => true,
 		'instructions' => sprintf($LANG_DBMAN['db_explanation_restore_option'], "<b>{$fname['basename']}</b>"),
-		'icon' => $baseurl . '/images/dbman.png',
-		'title' => $LANG_DBMAN['menu_restore']
+		'icon'         => $baseurl . '/images/dbman.png',
+		'title'        => $LANG_DBMAN['menu_restore']
 	);
 
-	$retval .= ADMIN_simpleList("", $header_arr, $text_arr, $data_arr, $menu_arr) . '<hr>';
+	$retval .= ADMIN_simpleList('', $header_arr, $text_arr, $data_arr, $menu_arr) . '<hr>';
 	
 //  other options
 
 	if ($hasBlob) {
-		$retval .= "<table class=\"plugin\"><tr><th>{$LANG_DBMAN['other_options']}</th></tr>";
-		$retval .= "<tr><td><input name=\"restore_blob\" type=\"checkbox\" {$str_restore_blob}>" . $LANG_DBMAN['restore_blob'] . ($restore_blob ? 'checked="checked"' : '') . '</td></tr>';
-		$retval .= '</table>';
+		$retval .= "<table class=\"plugin\"><tr><th>{$LANG_DBMAN['other_options']}</th></tr>"
+				.  "<tr><td><input name=\"restore_blob\" type=\"checkbox\" {$str_restore_blob}>"
+				.  $LANG_DBMAN['restore_blob']
+				.  ($restore_blob ? 'checked="checked"' : '') . '</td></tr>'
+				.  '</table>';
 	}
 
-	$retval .= '<input name="cmd" type="hidden" value="restore">';
-	$retval .= "<input name=\"filename\" type=\"hidden\" value=\"{$filename}\">";
-	$retval .= "<input name='submit' type='submit' value='{$LANG_DBMAN['restore_now']}'>";
-	$retval .= '</form>';
+	$retval .= '<input name="cmd" type="hidden" value="restore">'
+			.  "<input name=\"filename\" type=\"hidden\" value=\"{$filename}\">"
+			.  "<input name='submit' type='submit' value='{$LANG_DBMAN['restore_now']}'>"
+			.  '</form>';
 	
 	return $retval;
 }
@@ -565,21 +550,22 @@ function DBMAN_listBackups() {
 	global $_CONF, $_TABLES, $_IMAGE_TYPE, $LANG_ADMIN, $LANG_DBMAN;
 	global $dbman_menu, $baseurl;
 	
-	require_once($_CONF['path_system'] . 'lib-admin.php');
+	require_once $_CONF['path_system'] . 'lib-admin.php';
 	$retval = '';
 
 	if (is_writable($_CONF['backup_path'])) {
 		$retval .= "<form action='" . $baseurl . '/index.php' . "' method='post'>";
 		$backups = DBMAN_listBackupFiles();
-		$data_arr = array();
+		$data_arr = array ();
+		
 		foreach ($backups as $backup) {
 			$backupfile = $_CONF['backup_path'] . $backup;
 			$filesize   = COM_numberFormat(filesize($backupfile));
 			$url        = "<input name='deletefiles[]' type='checkbox' value='$backup'>  ";
 			$url       .= "<a href='" . $_CONF['site_url'] . "/admin/plugins/dbman/download.php?filename={$backup}'>{$backup}</a>";
-			$data_arr[] = array(
+			$data_arr[] = array (
 				'file' => $url,
-				'size' => $filesize . " <b>" . $LANG_DBMAN['bytes'] . "</b>"
+				'size' => $filesize . ' <b>' . $LANG_DBMAN['bytes'] . '</b>'
 			);
 		}
 
@@ -590,31 +576,39 @@ function DBMAN_listBackups() {
 			$dbman_menu['console']
 		);
 
-		$header_arr = array(      # dislay 'text' and use table field 'field'
-			array('text' => $LANG_DBMAN['backup_file'], 'field' => 'file'),
-			array('text' => $LANG_DBMAN['size'], 'field' => 'size')
+		$header_arr = array (      # dislay 'text' and use table field 'field'
+			array(
+				'text'  => $LANG_DBMAN['backup_file'],
+				'field' => 'file'
+			),
+			array(
+				'text'  => $LANG_DBMAN['size'],
+				'field' => 'size'
+			),
 		);
 
-		$text_arr = array(
-			'has_menu' => true,
+		$text_arr = array (
+			'has_menu'     => true,
 			'instructions' => $LANG_DBMAN['db_explanation_list'],
-			'icon' => $baseurl . '/images/dbman.png',
-			'title' => $LANG_DBMAN['last_ten_backups']
+			'icon'         => $baseurl . '/images/dbman.png',
+			'title'        => $LANG_DBMAN['last_ten_backups']
 		);
 		$retval .= ADMIN_simpleList("", $header_arr, $text_arr, $data_arr, $menu_arr);
 		
 		if (count($backups) > 0) {
-			$retval .= "<input name='cmd' type='hidden' value='delete'>";
-			$retval .= "<input name='submit' type='submit' value=\"{$LANG_DBMAN['lbl_delete_file']}\">";
+			$retval .= "<input name='cmd' type='hidden' value='delete'>"
+					.  "<input name='submit' type='submit' value=\"{$LANG_DBMAN['lbl_delete_file']}\">";
 		}
 		$retval .= '</form>';
 	} else {
-		$retval .= COM_startBlock ($LANG08[06], '',
-		COM_getBlockTemplate ('_msg_block', 'header'));
+		$retval .= COM_startBlock(
+			$LANG08[06], '', COM_getBlockTemplate('_msg_block', 'header')
+		);
 		$retval .= $LANG_DBMAN['not_writable'];
-		COM_errorLog ($_CONF['backup_path'] . ' is not writable.', 1);
-		$retval .= COM_endBlock (COM_getBlockTemplate ('_msg_block', 'footer'));
+		COM_errorLog($_CONF['backup_path'] . ' is not writable.', 1);
+		$retval .= COM_endBlock(COM_getBlockTemplate ('_msg_block', 'footer'));
 	}
+	
 	return $retval;
 }
 
@@ -638,11 +632,11 @@ function DBMAN_listBackups() {
 function DBMAN_backup($add_drop_table = false, $backup_blob = false,
 	$compress_data = false, $download_as_file = false) {
 	
-	global $_CONF, $_DB_host, $_DB_name, $_DB_dbms, $_TABLES, $_DBMAN_CONF;
-	global $dbman_string_types, $dbman_blob_types;
+	global $_CONF, $_DB_host, $_DB_name, $_DB_dbms, $_TABLES, $_DBMAN_CONF,
+		   $dbman_string_types, $dbman_blob_types;
 		
 	COM_errorLog("Dbman: Started backuping.", 1);
-	@set_time_limit(0);		// has no effect in case the safe_mode i on
+	@set_time_limit(0);		// has no effect in case the safe_mode is on
 	$timer   = new DBMAN_timer();	// Create timer
 	$db_name = dbman_quoteItem($_DB_name);
 	$ver     = dbman_getDBversion();
@@ -660,23 +654,25 @@ function DBMAN_backup($add_drop_table = false, $backup_blob = false,
 
 
 EOD1;
-	$foreign_keys = array();
+	$foreign_keys = array ();
 	
 	//	Get a list of table names
 	$tables = dbman_getTableList();
 
 	//	Get table definitions
 	foreach ($tables as $table) {
-		$is_to_be_quoted = array();
-		$is_blob         = array();
+		$is_to_be_quoted = array ();
+		$is_blob         = array ();
 		$def = dbman_getTableDef($table['name']);
 		$lines = explode(LB, $def);
-		$new_lines = array();
-		for ($i = 0; $i < count($lines); $i ++) {
+		$num_lines = count($lines);
+		$new_lines = array ();
+		
+		for ($i = 0; $i < $num_lines; $i ++) {
 			$line = $lines[$i];
 			// PHP 4.x.x doesn't support stripos
 			if (eregi('FOREIGN KEY', $line) === false
-			 && eregi('CONSTRAINT', $line) === false) {
+			 AND eregi('CONSTRAINT', $line) === false) {
 				// Column definition found
 				if (eregi('^[ ]*`(.*)`[ ]+([a-zA-Z0-9_]*).*$', $line, $match) > 0) {
 					$column_name = $match[1];
@@ -695,31 +691,30 @@ EOD1;
 									// at the end of the previous line.
 					$new_lines[$i - 1] = substr($new_lines[$i - 1], 0, strlen($new_lines[$i - 1]) - 1);
 				}
-				$foreign_keys[] = "ALTER TABLE " . dbman_quoteItem($table['name']) . LB 
-					. "  ADD " . $line . ";";
+				$foreign_keys[] = 'ALTER TABLE ' . dbman_quoteItem($table['name'])
+								. LB . '  ADD ' . $line . ';';
 			}
 		}
+		
 		$tables[$table['name']]['def']             = implode(LB, $new_lines);
 		$tables[$table['name']]['is_to_be_quoted'] = $is_to_be_quoted;
 		$tables[$table['name']]['is_blob']         = $is_blob;
 		$timer->update();
 	}
-//	$timer->update();
-
+	
 	//	Get table contents
 	foreach ($tables as $table) {
-	
 		//	Append table definition to $sql
-		$sql .= '--' . LB;
-		$sql .= '-- Table structure for table ' . dbman_quoteItem($table['name']) . LB;
-		$sql .= '--' . LB . LB;
+		$sql .= '--' . LB
+			 .  '-- Table structure for table ' . dbman_quoteItem($table['name']) . LB
+			 .  '--' . LB . LB;
 		if ($add_drop_table) {
 			$sql .= 'DROP TABLE IF EXISTS ' . dbman_quoteItem($table['name']) . ';' . LB . LB;
 		}
-		$sql .= $tables[$table['name']]['def'] . LB . LB;
-		$sql .= '--' . LB;
-		$sql .= '-- Dumping data for table ' . dbman_quoteItem($table['name']) . LB;
-		$sql .= '--' . LB . LB;
+		$sql .= $tables[$table['name']]['def'] . LB . LB
+			 .  '--' . LB
+			 .  '-- Dumping data for table ' . dbman_quoteItem($table['name']) . LB
+			 .  '--' . LB . LB;
 
 		if (DBMAN_isBackupExcept($table['name'])) {
 			$sql .= "-- (skipped backuping {$table['name']})" . LB . LB;
@@ -727,8 +722,8 @@ EOD1;
 		}
 
 		//  Count records in advance to be used in "SELECT * LIMIT ..."
-		$rs  = DB_query("SELECT COUNT(*) AS cnt FROM {$table['name']};");
-		$A = DB_fetchArray($rs);
+		$rs = DB_query("SELECT COUNT(*) AS cnt FROM {$table['name']}");
+		$A  = DB_fetchArray($rs);
 		$num_rows = $A['cnt'];
 		
 		for ($offset = 0; $offset < $num_rows; $offset += $_DBMAN_CONF['chunk_size']) {
@@ -739,8 +734,10 @@ EOD1;
 				$is_to_be_quoted = $table['is_to_be_quoted'];
 				$is_blob         = $table['is_blob'];
 				$has_blob_field  = in_array(true, $is_blob);
-				while (($r = DB_fetchArray($rst, false)) !== false) {		//  Fetch an associative array alone
-					$column_values = array();
+
+				//  Fetch an associative array alone
+				while (($r = DB_fetchArray($rst, false)) !== false) {
+					$column_values = array ();
 					foreach ($r as $column_name => $column_value) {
 						if (is_null($column_value)) {
 							$column_value = 'NULL';
@@ -757,43 +754,46 @@ EOD1;
 						}
 						$column_values[] = $column_value;
 					}
-					if ($has_blob_field && $backup_blob) {
+					if ($has_blob_field AND $backup_blob) {
 						$sql .= '-- Q:';
 					}
-					$sql .= "INSERT INTO " . dbman_quoteItem($table['name']) . " VALUES (" . implode(',' , $column_values) . ');' . LB;
+					$sql .= 'INSERT INTO ' . dbman_quoteItem($table['name'])
+						 .  'VALUES (' . implode(',' , $column_values) . ');' . LB;
 				}
 			}
 
 			$timer->update();
 		} /* End of for-loop */
+
 		$sql .= LB;
 		$timer->update();
 	} /* End of foreach-loop */
 	
 	//  Append foreign key definitions if any
 	if (count($foreign_keys) > 0) {
-		$sql .= '--' . LB . '-- FOREIGN KEY and CONSTRAINT definitions' . LB . '--' . LB . LB;
-		$sql .= implode(LB, $foreign_keys) . LB;
+		$sql .= '--' . LB . '-- FOREIGN KEY and CONSTRAINT definitions' . LB
+			 .  '--' . LB . LB
+			 .  implode(LB, $foreign_keys) . LB;
 	}
 	
 	//	Save data into a file in the 'backups' dir
-	if (! is_writable($_CONF['backup_path'])) {
+	clearstatcache();
+	if (!is_writable($_CONF['backup_path'])) {
 		COM_errorLog("Dbman: the '/backups' directory is not writable.  Please chmod it to 775 or 777.");
 		return 2;
-		exit;
 	}
 	
-	$isSuccess  = false;			//  flag to show a success in saving
+	$isSuccess   = false;			//  flag to show a success in saving
 	$curdatetime = date("Y_m_d_H_i_s");
 	$backupfile  = "{$_CONF['backup_path']}{$_DB_name}_db_backup_{$curdatetime}.sql";
-	if (file_exists($backupfile) && ! is_writable($backupfile)) {
+	clearstatcache();
+	if (file_exists($backupfile) AND !is_writable($backupfile)) {
 		COM_errorLog("Dbman: Couldn't create a backup file.");
 		return 2;
-		exit;
 	}
 	
 	//  If $compress_data is true, try to compress the data
-	if ($compress_data && function_exists('gzopen')) {
+	if ($compress_data AND function_exists('gzopen')) {
 		$backupfile .= '.gz';
 		$fh = @gzopen($backupfile, "wb" . $_DBMAN_CONF['compression_level']);
 		if ($fh === false) {
@@ -820,8 +820,8 @@ EOD1;
 	
 	//  If $compress_data is false, or when there is a failure to compress, save 
 	//  backup files without compression
-	if (! $isSuccess) {
-		$fh = @fopen($backupfile, "wb");
+	if (!$isSuccess) {
+		$fh = @fopen($backupfile, 'wb');
 		if ($fh === false) {
 			COM_errorLog("Dbman: Couldn't open a backup-file for writing.", 1);
 		} else {
@@ -843,24 +843,24 @@ EOD1;
 		}
 	}
 
-	if (! $isSuccess) {		// couldn't backup at all
+	if (!$isSuccess) {		// couldn't backup at all
 		return 2;
-		exit;
 	} else {
 		if ($download_as_file) {
 			$info = pathinfo($backupfile);
-			if ($info['extension'] == 'gz') {
-				header("Content-type: application/x-gzip");
+			if (isset($info['extension']) AND $info['extension'] == 'gz') {
+				header('Content-type: application/x-gzip');
 			} else {
-				header("Content-type: text/x-sql");
-//			header("Content-type: application/octetstream");
+				header('Content-type: text/x-sql');
+//			header('Content-type: application/octetstream');
 			}
+			
 			header("Content-Disposition: attachment; filename={$info['basename']}");
 			readfile($backupfile);
 			return 1;
-			exit;
 		}
 	}
+
 	return 0;
 }
 
@@ -893,8 +893,8 @@ function DBMAN_restore($filename, $structures_arr, $data_arr, $restore_blob = fa
 	$num_structure = count($structures_arr);
 	$num_data      = count($data_arr);
 	$num_structure_success = $num_data_success = 0;
-	$timer   = new DBMAN_timer();	// Create timer
-	$msg = 'Dbman: restoration started.';
+	$timer = new DBMAN_timer();	// Create timer
+	$msg   = 'Dbman: restoration started.';
 	COM_errorLog($msg);
 	echo $msg . '<br>';
 
@@ -902,8 +902,8 @@ function DBMAN_restore($filename, $structures_arr, $data_arr, $restore_blob = fa
 	for ($i = 0; $i < $num_structure; $i ++) {
 		// Drop tables first
 		$table    = $structures_arr[$i];
-		$drop_sql = 'DROP TABLE ' . dbman_quoteItem($table) . ';';
-		echo $drop_sql . "<br>";
+		$drop_sql = 'DROP TABLE ' . dbman_quoteItem($table);
+		echo $drop_sql . '<br>';
 		DB_query($drop_sql, 1);
 		if (DB_error()) {
 			$msg = "Dbman: couldn't drop table {$table}.";
@@ -932,7 +932,7 @@ function DBMAN_restore($filename, $structures_arr, $data_arr, $restore_blob = fa
 	
 	// Restore table contents
 	$data = file_get_contents($filename);
-	$data = str_replace(array("\r\n", "\r"), LF, trim($data));
+	$data = str_replace(array ("\r\n", "\r"), LF, trim($data));
 	$data = explode(LB, $data);
 	for ($i = 0; $i < $num_data; $i ++) {
 		$table   = $data_arr[$i];
@@ -943,6 +943,7 @@ function DBMAN_restore($filename, $structures_arr, $data_arr, $restore_blob = fa
 		echo $msg . '<br>';
 		reset($data);
 		$num_error = 0;
+		
 		for ($j = 0; $j < count($data); $j ++) {
 			if (eregi("^[ \t]*INSERT[ \t]+INTO[ \t]+" . dbman_quoteItem($table), $data[$j], $match) > 10) {
 				$d = $data[$j];
@@ -959,23 +960,23 @@ function DBMAN_restore($filename, $structures_arr, $data_arr, $restore_blob = fa
 			
 			$timer->update();
 		}
+		
 		$msg = "Dbman: finished restoring data into table {$table}.";
 		COM_errorLog($msg);
 		echo '<br>' . $msg . '<br>';
 		if ($num_error == 0) {
 			$num_data_success ++;
 		}
-
+		
 		$timer->update();
 	}
 	
 	$msg ='Dbman: restoration completed.';
 	COM_errorLog($msg);
-	echo $msg . '<br>';
-	echo "<hr><p>To return to the top page, <a href=\"{$_CONF['site_url']}\"><ab>CLICK HERE</b>.</a></p>";
+	echo $msg . '<br><hr>'
+	     . "<p>To return to the top page, <a href=\"{$_CONF['site_url']}\"><ab>CLICK HERE</b>.</a></p>";
 	
-	exit;
-	return false;
+	return true;
 }
 
 // Delete the specified backup file
@@ -984,14 +985,16 @@ function DBMAN_restore($filename, $structures_arr, $data_arr, $restore_blob = fa
 function DBMAN_delete($filename) {
 	global $_CONF, $_USER;
 	
-	if ($filename != basename($filename) || (! preg_match ('/\.sql$/i', $filename) && ! preg_match ('/\.sql\.gz$/i', $filename))) {
+	if ($filename != basename($filename) OR (!preg_match('/\.sql$/i', $filename)
+	 AND !preg_match('/\.sql\.gz$/i', $filename))) {
 		COM_errorLog("Dbman: Error!  Path Traversal attack deteced.  User id: {$_USER['uid']}, Username: {$_USER['username']}, IP: {$_SERVER['REMOTE_ADDR']}");
 		return false;
 	}
 	
 	$filename = $_CONF['backup_path'] . $filename;
+	clearstatcache();
 	if (file_exists($filename)) {
-		$result = unlink($filename);
+		$result = @unlink($filename);
 	}
 	
 	return $result;
@@ -1002,24 +1005,26 @@ function DBMAN_delete($filename) {
 function DBMAN_showSQLConsole() {
 	global $_CONF, $LANG_DBMAN, $dbman_menu, $baseurl;
 	
-	$retval = "<form action='" . $baseurl . '/index.php' . "' method='post'>";
+	$retval = COM_startBlock($LANG_DBMAN['menu_console'])
+			. "<form action='" . $baseurl . '/index.php' . "' method='post'>";
 	$menu_arr = array (
 		$dbman_menu['admin'],
+		$dbman_menu['list'],
 		$dbman_menu['backup'],
 		$dbman_menu['restore']
 	);
 
     $T = new Template($_CONF['path_layout'] . 'admin/lists');
-    $T->set_file (
+    $T->set_file(
 		array (
-			'topmenu' => 'topmenu_nosearch.thtml',
+			'topmenu'    => 'topmenu_nosearch.thtml',
             'menufields' => 'menufields.thtml'
 		)
 	);
-//    $T->set_var('icon', $baseurl . '/images/dbman.png');
-    $T->set_var('icon', "<img src=\"{$baseurl}/images/dbman.png\" alt=\"\">" );
+    $T->set_var('icon', $baseurl . '/images/dbman.png');
     $T->set_var('lang_instructions', $LANG_DBMAN['desc_exec_sql']);
 	$menu_items = '';
+
 	for ($i = 0; $i < count($menu_arr); $i ++) {
 		$T->set_var('menu_url', $menu_arr[$i]['url']);
 		$T->set_var('menu_text', $menu_arr[$i]['text']);
@@ -1029,13 +1034,14 @@ function DBMAN_showSQLConsole() {
 		$T->parse('menu_fields', 'menufields', true);
 		$T->clear_var('line');
 	}
+
 	$T->parse('output', 'topmenu');
 	$retval .= $T->finish($T->get_var('output'));
-	$retval .= "<textarea name='SQL' rows='10' cols='80'></textarea><br>";
-	$retval .= "<input name='cmd' type='hidden' value='console_exec'>";
-	$retval .= "<input name='submit' type='submit' value=\"{$LANG_DBMAN['lbl_exec_sql']}\">";
-	$retval .= '</form>';
-
+	$retval .= "<textarea name='SQL' rows='10' cols='80'></textarea><br>"
+			.  "<input name='cmd' type='hidden' value='console_exec'>"
+			.  "<input name='submit' type='submit' value=\"{$LANG_DBMAN['lbl_exec_sql']}\">"
+			. '</form>';
+	$retval .= COM_endBlock();
 	return $retval;
 }
 
@@ -1049,11 +1055,10 @@ function DBMAN_execSQL() {
 	$retval = COM_startBlock('Dbman: ' . $LANG_DBMAN['lbl_exec_sql']);
 	if (isset($_POST['SQL'])) {
 		$SQL = trim($_POST['SQL']);
-		$SQL = str_replace(array("\r\n", "\n\r", "\r", "\n"), ' ', $SQL);
+		$SQL = str_replace(array ("\r\n", "\n\r", "\r", "\n"), ' ', $SQL);
 		$retval .= "<br>{$LANG_DBMAN['sql_executed']}<br><p style='color: black; background-color: white; padding: 5px; border: solid 1px black;'>";
 		$retval .= htmlspecialchars($SQL, ENT_NOQUOTES) . "</p>{$LANG_DBMAN['sql_result']}<br>";
-//		if (! preg_match('/^(SELECT|DELETE|UPDATE|INSERT)/i', $SQL)) {
-		if ( 1 == 0 ) {
+		if (! preg_match('/^(SELECT|DELETE|UPDATE|INSERT)/i', $SQL)) {
 			$has_error = true;
 			$result = htmlspecialchars($LANG_DBMAN['sql_error_siud'], ENT_NOQUOTES);
 		} else {
@@ -1063,40 +1068,44 @@ function DBMAN_execSQL() {
 				$has_error = true;
 				$result = htmlspecialchars(DB_error(), ENT_NOQUOTES);
 			} else {
-				$result = "<table cellpadding='3' cellspacing='0' border='1'>";
-				$row_names = array();
-				$A = DB_fetchArray($r);
-				$keys = array_keys($A);
-				$result .= '<tr>';
-				foreach ($keys as $key) {
-					if (! is_numeric($key)) {
-						$row_names[] = $key;
-						$result .= '<th>' . COM_applyFilter($key) . '</th>';
-					}
-				}
-				$result .= '</tr>';
-				
-				$even = true;
-				while ($A = DB_fetchArray($r)) {
-					if ($even) {
-						$result .= "<tr bgcolor='#ccffff'>";
-					} else {
-						$result .= "<tr bgcolor='#6699cc'>";
-					}
-					$even = ! $even;
-					foreach ($row_names as $row_name) {
-						$result .= '<td>';
-						if ($A[$row_name] == '') {
-							$result .= '&nbsp;';
-						} else {
-							$result .= htmlspecialchars($A[$row_name], ENT_NOQUOTES);
+				if ( preg_match('/^SELECT/i', $SQL)) {
+					$result = "<table cellpadding='3' cellspacing='0' border='1'>";
+					$row_names = array ();
+					$A = DB_fetchArray($r);
+					$keys = array_keys($A);
+					$result .= '<tr>';
+					foreach ($keys as $key) {
+						if (! is_numeric($key)) {
+							$row_names[] = $key;
+							$result .= '<th>' . COM_applyFilter($key) . '</th>';
 						}
-						$result .= '</td>';
 					}
 					$result .= '</tr>';
-				}
+				
+					$even = true;
+					while ($A = DB_fetchArray($r)) {
+						if ($even) {
+							$result .= "<tr bgcolor='#ccffff'>";
+						} else {
+							$result .= "<tr bgcolor='#6699cc'>";
+						}
+						$even = ! $even;
+						foreach ($row_names as $row_name) {
+							$result .= '<td>';
+							if ($A[$row_name] == '') {
+								$result .= '&nbsp;';
+							} else {
+								$result .= htmlspecialchars($A[$row_name], ENT_NOQUOTES);
+							}
+							$result .= '</td>';
+						}
+						$result .= '</tr>';
+					}
 
-				$result .= '</table>';
+					$result .= '</table>';
+				} else {
+					$result = "<p>Succeeded.</p>";
+				}
 			}
 			DB_displayError(false);
 		}

@@ -35,8 +35,8 @@
  * Dbman plugin download controller file
  */
 
-require_once('../../../lib-common.php');
-require_once($_CONF['path'] . '/plugins/dbman/config.php');
+require_once '../../../lib-common.php';
+require_once $_CONF['path'] . '/plugins/dbman/config.php';
 
 // Check if user has rights to access this page
 if (!SEC_hasRights('dbman.edit')) {
@@ -68,7 +68,7 @@ if ($filename != basename($filename) || (! preg_match('/\.sql$/i', $filename) &&
 // Check if the file really exists
 $filename = $_CONF['backup_path'] . $filename;
 clearstatcache();
-if (! file_exists($filename)) {
+if (!file_exists($filename)) {
     // The designated file doesn't exist
     COM_errorLog("The file you designated doesn't exist.  User id: {$_USER['uid']}, Username: {$_USER['username']}, IP: $REMOTE_ADDR",1);
     $display  = COM_siteHeader();
