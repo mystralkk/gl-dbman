@@ -144,7 +144,7 @@ abstract class Dbman
 		$rst = DB_query($sql);
 
 		if ($rst !== false) {
-			while (($r = DB_fetchArray($rst, MYSQL_NUM)) !== false) {
+			while (($r = DB_fetchArray($rst)) !== false) {
 				$table_name = $r[0];
 				$retval[$table_name]['name'] = $table_name;
 			}
