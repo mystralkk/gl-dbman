@@ -5,7 +5,7 @@
 // +---------------------------------------------------------------------------+
 // | geeklog/plugins/dbman/config.php                                          |
 // +---------------------------------------------------------------------------+
-// | Copyright (C) 2008-2018 mystral-kk - geeklog AT mystral-kk DOT net        |
+// | Copyright (C) 2008-2022 mystral-kk - geeklog AT mystral-kk DOT net        |
 // |                                                                           |
 // | Constructed with the Universal Plugin                                     |
 // | Copyright (C) 2002 by the following authors:                              |
@@ -42,9 +42,9 @@ global $_DB_table_prefix, $_CONF;
 // the Dbman plugin's config array
 $_DBMAN_CONF = array();
 
-$_DBMAN_CONF['pi_version'] = '0.8.1.1';					// Plugin Version
+$_DBMAN_CONF['pi_version'] = '0.8.1.2';					// Plugin Version
 $_DBMAN_CONF['gl_version'] = '1.6.0';					// GL Version plugin for
-$_DBMAN_CONF['pi_url']     = 'http://mystral-kk.net/';	// Plugin Homepage
+$_DBMAN_CONF['pi_url']     = 'https://mystral-kk.net/';	// Plugin Homepage
 $_DBMAN_CONF['GROUPS']     = array(
 		'Dbman Admin' => 'Users in this group can administer the Dbman plugin',
 );

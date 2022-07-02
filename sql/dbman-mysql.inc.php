@@ -5,7 +5,7 @@
 // +---------------------------------------------------------------------------+
 // | geeklog/plugins/dbman/sql/dbman-mysql.inc                                 |
 // +---------------------------------------------------------------------------+
-// | Copyright (C) 2008-2018 mystral-kk - geeklog AT mystral-kk DOT net        |
+// | Copyright (C) 2008-2022 mystral-kk - geeklog AT mystral-kk DOT net        |
 // |                                                                           |
 // | Constructed with the Universal Plugin                                     |
 // | Copyright (C) 2002 by the following authors:                              |
@@ -188,7 +188,7 @@ abstract class Dbman
 	public static function quoteString($item) {
 		$item = str_replace(array("\r", "\n"), array('\\r', '\\n'), $item);
 
-		if (!get_magic_quotes_gpc()) {
+		if (!is_callable('get_magic_quotes_gpc') || !get_magic_quotes_gpc()) {
 			$item = self::escapeString($item);
 			$item = str_replace(array('\\\\r', '\\\\n'), array('\\r', '\\n'), $item);
 		}

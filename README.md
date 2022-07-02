@@ -3,13 +3,12 @@ The Dbman plugin backups/restores database WITHOUT using mysqldump(.exe).
 
 ## System requirements
 1. Geeklog-1.6.0 or newer
-2. PHP-5.x - 7.x
+2. PHP-5.x - 8.1
 
 ## Install
 In the following descriptions,
 
 **geeklog_dir** is the directory where the system db-config.php file resides
-**public_html** is the directory where lib-common.php file resides
 **admin** is the directory where the administration files reside (usually, under **public_html**)
 
 1. Uncompress the dbman plugin archive while in the <geeklog_dir>/plugins directory. The archive will create a directory called dbman in the plugins directory.
